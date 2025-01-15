@@ -4,6 +4,8 @@ from api.common import tools
 from datetime import datetime
 from api.services.database import Base
 
+from common.dto import NDVIResult as DTOResult
+
 
 class NDVIResult(Base):
     __tablename__ = "ndvi_results"
@@ -30,3 +32,11 @@ class NDVIResult(Base):
         remote_side="User.id",  # type: ignore  # noqa: F821
         primaryjoin="NDVIResult.issuer_id == User.id",
     )
+
+    @staticmethod
+    def as_db_instances(array: list[DTOResult], request):
+        return NDVIResult(
+            issuer_id=request.issuer_id,
+            reports=[report.as_dict() for report in array],
+            heatmaps=[report.problems_map for report in array],
+        )

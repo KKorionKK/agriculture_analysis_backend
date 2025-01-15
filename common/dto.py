@@ -1,9 +1,8 @@
-from dataclasses import dataclass, field
+import dataclasses
+from dataclasses import dataclass
 import numpy as np
 
 from typing import Tuple
-
-from worker.analysis.model import NDVIResult
 
 
 @dataclass
@@ -52,3 +51,24 @@ class CropHealthData:
             problems_map=problems_map,
             coordinates=coordinates,
         )
+
+
+@dataclass
+class NDVIResult:
+    mean_ndvi: float
+    affected_percentage: float
+    plants_percentage: float
+    ndvi_map: str
+    problems_map: str
+    coordinates: Tuple[float, float] | None
+
+    def as_dict(self):
+        return dataclasses.asdict(self)
+
+
+@dataclass
+class NeuralResult:
+    shapes: list[list[float]]
+    labels: list[str]
+    input_img: str
+    coordinates: Tuple[float, float] | None
