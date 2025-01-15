@@ -1,0 +1,334 @@
+{
+	"fields": {
+		"id": "98072b66-e34f-4714-ad64-8c04a8aa8e2f",
+		"name": "test",
+		"latitude": 14.22,
+		"longitude": 14.22,
+		"area": 225.1,
+		"last_analyzed": null,
+		"avg_ndvi": 0.0,
+		"avg_vegetation": 0.0,
+		"avg_decease": 0.0,
+		"analrequests": [
+			{
+				"ndvi_analyze_status": "ready",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": [
+					null,
+					null
+				],
+				"ndvi": {
+					"id": "44573348-2cb6-47bc-9893-c7a42a230a16",
+					"gis_file": null,
+					"reports": [
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095113_0000_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095113_0000_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095121_0004_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095121_0004_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095115_0001_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095115_0001_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095119_0003_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095119_0003_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095131_0009_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095131_0009_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095129_0008_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095129_0008_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095117_0002_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095117_0002_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095125_0006_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095125_0006_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095123_0005_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095123_0005_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095132_0010_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095132_0010_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						}
+					]
+				},
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": {
+					"info": "Master.define_analysis_type() got multiple values for argument 'request'",
+					"dt": "2024-11-26 15:58:34.664972+00:00"
+				},
+				"disease_focus": null,
+				"ndvi": null,
+				"plant": null
+			},
+			{
+				"ndvi_analyze_status": "waiting",
+				"plants_analyze_status": "declined",
+				"fail_info": null,
+				"disease_focus": [
+					null,
+					null
+				],
+				"ndvi": {
+					"id": "4ccfaef8-0d3d-4fa2-9f23-3bf77628c1cf",
+					"gis_file": null,
+					"reports": [
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0001_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0001_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0000_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0000_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0002_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0002_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0003_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0003_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095131_0009_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095131_0009_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0004_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0004_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0005_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/0005_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095129_0008_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095129_0008_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095127_0007_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095127_0007_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						},
+						{
+							"affected_percentage": 0.0,
+							"plants_percentage": 0.0,
+							"ndvi": null,
+							"ndvi_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095125_0006_NIR_rgb_ndvi_overlay.png",
+							"problems_map": "https://s3.timeweb.cloud/058ec85b-a033d29f-40af-47a8-b537-af7433b01be1/IMG_210204_095125_0006_NIR_rgb_problems_overlay.png",
+							"latitude": null,
+							"longitude": null
+						}
+					]
+				},
+				"plant": null
+			}
+		]
+	}
+}

@@ -1,0 +1,15 @@
+.ruff_cache
+.venv
+__pycache__
+.idea
+.DS_Store
+*.log
+*.tif
+*._nir
+*._rgb
+*.zip
+*.JPG
+*._DS_Store
+*.PNG
+.env
+*._.DS_Store
