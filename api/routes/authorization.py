@@ -12,3 +12,9 @@ class AuthorizationHandler(BaseHandler):
             token = await self.auth_service.register_user(schema.data)
         print(token)
         self.write(token)
+
+
+class AuthorizationStatusHandler(BaseHandler):
+
+    async def get(self):
+        self.write({'status': 'OK'})

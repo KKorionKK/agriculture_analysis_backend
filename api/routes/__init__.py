@@ -1,4 +1,4 @@
-from .authorization import AuthorizationHandler
+from .authorization import AuthorizationHandler, AuthorizationStatusHandler
 from .upload import UploadHandler
 from .fields import FieldHandler, OneFieldHandler
 from .analyze_request import AnalyzeRequestHandler
@@ -11,6 +11,7 @@ def get_routes(data: dict) -> list[str, BaseHandler, dict]:
     auth_data_dict["auth_enabled"] = False
     return [
         (r"/authorization", AuthorizationHandler, auth_data_dict),
+        (r"/authorization/status", AuthorizationStatusHandler, data),
         (r"/upload", UploadHandler, data),
         (r"/field", FieldHandler, data),
         (r"/field/([^/]+)", OneFieldHandler, data),
