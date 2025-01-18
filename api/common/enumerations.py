@@ -56,13 +56,13 @@ class Roles(str, Enum):
 
 
 class ChartType(str, Enum):
+    ndvi = "ndvi"
+    disease = "disease"
+    health = "health"
+
+
+class Filter(str, Enum):
     day = "day"
     week = "week"
     month = "month"
     year = "year"
-
-
-class Filter(str, Enum):
-    ndvi = "ndvi"
-    disease = "disease"
-    health = "health"

@@ -2,6 +2,9 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from api.common.enumerations import DataStatus
+from api.schemas.analyze_request import AnalyzeRequestSchema
+
+from api.schemas.charts import ChartSchema
 
 
 class Coordinate(BaseModel):
@@ -66,6 +69,7 @@ class NDVIReport(BaseModel):
         )
 
 
+
 class NDVIAnalysisSchema(BaseModel):
     id: str
     gis_file: str | None
@@ -75,7 +79,7 @@ class NDVIAnalysisSchema(BaseModel):
 class PlantsAnalysisSchema(BaseModel):
     id: str
     gis_file: str | None
-    reports: list[NDVIReport]
+    reports: dict  # TODO: определиться
 
 
 class AnalysisRequest(BaseModel):
@@ -102,6 +106,7 @@ class FieldDetailSchema(BaseModel):
     avg_decease: float
 
     analrequests: list[AnalysisRequest]
+    chart: ChartSchema | None = None
 
 
 

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 import datetime
 
-from api.common.enumerations import ChartType
+from api.common.enumerations import ChartType, Filter
 
 
 class ChartData(BaseModel):
@@ -11,3 +11,15 @@ class ChartData(BaseModel):
     data: list[float]
     type: ChartType
 
+
+class ChartValue(BaseModel):
+    value: float
+    dt: str
+
+
+class ChartSchema(BaseModel):
+    filter: Filter
+    chart_type: ChartType
+    from_dt: datetime.datetime
+    to_dt: datetime.datetime
+    values: list[ChartValue]

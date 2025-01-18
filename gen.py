@@ -1,5 +1,4 @@
 import asyncio
-
 from api.mocks.generator import DataGenerator
 import pickle
 

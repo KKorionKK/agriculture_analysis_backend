@@ -3,6 +3,7 @@ import random
 import pprint
 import os
 import copy
+import datetime
 import pickle
 
 from api.services.database import PostgreSQLController
@@ -109,14 +110,19 @@ class DataGenerator:
             await session.flush()
             await session.commit()
 
-    async def create_mock_database(self, organizations_count: int = 10, users_count: int = 50, fields_count: int = 100, requests_count: int = 200):
+    def __add_main_user_fields(self, main_user: User, fields: list[Field]) -> None:
+        self.users_fields[main_user.id] = fields
+
+    async def create_mock_database(self, organizations_count: int = 10, users_count: int = 50, fields_count: int = 100, requests_count: int = 200) -> None:
         users = await self.create_users(users_count)
         main_user = self.__create_main_test_user()
         main_user_fields = self.create_main_user_fields(main_user)
         organizations, crs = await self.create_organizations(main_user, users, organizations_count)
         fields = await self.create_fields(users, main_user_fields)
 
-        analrequests, ndvis, plants = await self.create_requests(users)
+        self.__add_main_user_fields(main_user, main_user_fields)
+
+        analrequests, ndvis, plants = await self.create_requests(users + [main_user])
         self.__dump(
             users=users,
             main_user=main_user,
@@ -172,6 +178,7 @@ class DataGenerator:
     def create_main_user_fields(self, user: User) -> list[Field]:
         return [
             Field(
+                id=uuid.uuid4().hex,
                 name='Тестовое поле',
                 color='#088',
                 coordinates=[
@@ -184,6 +191,7 @@ class DataGenerator:
                 owner_id=user.id
             ),
             Field(
+                id=uuid.uuid4().hex,
                 name='Тестовое поле 2',
                 color='#088',
                 coordinates=[
@@ -337,15 +345,16 @@ class DataGenerator:
             )
         return reports
 
-    def __create_ndvi(self, field: Field) -> NDVIResult:
+    def __create_ndvi(self, field: Field, created_at: datetime.datetime) -> NDVIResult:
         return NDVIResult(
             id=uuid.uuid4().hex,
             reports=self.create_reports(),
             heatmaps=[],
-            issuer_id=field.owner_id
+            issuer_id=field.owner_id,
+            created_at=created_at
         )
 
-    def __create_plants(self, field: Field) -> PlantsResult:
+    def __create_plants(self, field: Field, created_at: datetime.datetime) -> PlantsResult:
         return PlantsResult(
             id=uuid.uuid4().hex,
             report=NDVIResultDTO(
@@ -356,10 +365,11 @@ class DataGenerator:
                 coordinates=(123, 123),
             ).as_dict(),
             artifacts=[],
-            issuer_id=field.owner_id
+            issuer_id=field.owner_id,
+            created_at=created_at
         )
 
-    async def create_requests(self, users: list[User]):
+    async def create_requests(self, users: list[User], requests_count_per_field: int = 10):
         analrequests: list[AnalyzeRequest] = []
         ndvis: list[NDVIResult] = []
         plants: list[PlantsResult] = []
@@ -367,31 +377,36 @@ class DataGenerator:
             if not self.users_fields[user.id]:
                 continue
             for field in self.users_fields[user.id]:
-                ndvi = None
-                plant = None
-                this_ndvi = bool(random.randint(0, 1))
-                this_plants = bool(random.randint(0, 1))
-                # this_failed = bool(random.randint(0, 1))
+                for i in range(requests_count_per_field):
+                    ndvi = None
+                    plant = None
+                    this_ndvi = bool(random.randint(0, 1))
+                    this_plants = bool(random.randint(0, 1))
+                    # this_failed = bool(random.randint(0, 1))
 
-                if this_ndvi:
-                    ndvi = self.__create_ndvi(field)
-                    ndvis.append(ndvi)
-                if this_plants:
-                    plant = self.__create_plants(field)
-                    plants.append(plant)
+                    created_at = (datetime.datetime.now(datetime.timezone.utc) +
+                                  random.choice([-1, 1]) * datetime.timedelta(days=random.randint(1, 15)))
+
+                    if this_ndvi:
+                        ndvi = self.__create_ndvi(field, created_at)
+                        ndvis.append(ndvi)
+                    if this_plants:
+                        plant = self.__create_plants(field, created_at)
+                        plants.append(plant)
 
 
-                request = AnalyzeRequest(
-                    id=uuid.uuid4().hex,
-                    origin_ndvi_data="123" if this_ndvi else None,
-                    origin_plants_data="123" if this_plants else None,
-                    ndvi_status=random.choice([*DataStatus._member_names_]),
-                    plants_status=random.choice([*DataStatus._member_names_]),
-                    fail_info=None,
-                    field_id=field.id,
-                    ndvi_result_id=ndvi.id if ndvi else None,
-                    plants_result_id=plant.id if plant else None,
-                    issuer_id=user.id
-                )
-                analrequests.append(request)
+                    request = AnalyzeRequest(
+                        id=uuid.uuid4().hex,
+                        origin_ndvi_data="123" if this_ndvi else None,
+                        origin_plants_data="123" if this_plants else None,
+                        ndvi_status=random.choice([*DataStatus._member_names_]),
+                        plants_status=random.choice([*DataStatus._member_names_]),
+                        fail_info=None,
+                        field_id=field.id,
+                        ndvi_result_id=ndvi.id if ndvi else None,
+                        plants_result_id=plant.id if plant else None,
+                        issuer_id=user.id,
+                        created_at=created_at
+                    )
+                    analrequests.append(request)
         return analrequests, ndvis, plants

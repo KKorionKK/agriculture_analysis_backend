@@ -162,15 +162,28 @@ class FieldsRepository(Repository):
                     )
                 )
                 continue
+            mean_ndvi = 0
+            mean_health = 0
+            mean_disease = 0
+            if requests[i].ndvi_result:
+                mean_ndvi = round(
+                    sum([report['affected_percentage'] for report in requests[i].ndvi_result.reports]) / len(
+                        requests[i].ndvi_result.reports), 2)
+                mean_health = round(
+                    sum([report['plants_percentage'] for report in requests[i].ndvi_result.reports]) / len(
+                        requests[i].ndvi_result.reports), 2)
+                mean_disease = round(sum([report['affected_percentage'] for report in requests[i].ndvi_result.reports]) / len(
+                    requests[i].ndvi_result.reports), 2)
+
             schemas.append(
                 FieldExtendedWithMeanValuesSchema(
                     id=fields[i].id,
                     name=fields[i].name,
                     color=fields[i].color,
                     coordinates=fields[i].coordinates,
-                    mean_ndvi=round(sum([report['affected_percentage'] for report in requests[i].ndvi_result.reports]) / len(requests[i].ndvi_result.reports), 2),
-                    mean_health=round(sum([report['plants_percentage'] for report in requests[i].ndvi_result.reports]) / len(requests[i].ndvi_result.reports), 2),
-                    mean_disease=round(sum([report['affected_percentage'] for report in requests[i].ndvi_result.reports]) / len(requests[i].ndvi_result.reports), 2),
+                    mean_ndvi=mean_ndvi,
+                    mean_health=mean_health,
+                    mean_disease=mean_disease,
                     area=fields[i].area
                 )
             )
@@ -223,11 +236,11 @@ class FieldsRepository(Repository):
                         gis_file=ndvi.gis_file,
                         reports=[NDVIReport.from_dict(item) for item in ndvi.reports]
                     )
-                if plants:
+                if plants: # TODO: переделать
                     plants_schema = PlantsAnalysisSchema(
-                        id=ndvi.id,
-                        gis_file=ndvi.gis_file,
-                        reports=[NDVIReport.from_dict(item) for item in plants.report]
+                        id=plants.id,
+                        gis_file=plants.gis_file,
+                        reports=plants.report
                     )
 
                 schemas.append(AnalysisRequest(
@@ -266,6 +279,7 @@ class FieldsRepository(Repository):
         avg_decease /= round(len(last_completed.ndvi.reports), 2)
 
         return avg_ndvi, avg_vegetation, avg_decease
+
 
     async def get_field_details(self, field_id: str, user_id: str) -> FieldDetailSchema | None:
         async with self.client() as session:
