@@ -31,12 +31,12 @@ class BaseHandler(ErrorHandler):
     unicode_type = str
 
     def initialize(
-            self,
-            pg: PGManager,
-            vigilante: Vigilante,
-            authorization_service: AuthorizationService,
-            emitter: Emitter,
-            auth_enabled: bool = True,
+        self,
+        pg: PGManager,
+        vigilante: Vigilante,
+        authorization_service: AuthorizationService,
+        emitter: Emitter,
+        auth_enabled: bool = True,
     ):
         self.pg = pg  # noqa
         self.vigilante = vigilante  # noqa
@@ -46,31 +46,47 @@ class BaseHandler(ErrorHandler):
         self.logger = vigilante.get_logger()
         self.current_user: User = None
 
-    async def check_roles(self, role: Roles, organization_id: str, silent: bool = False) -> bool | None:
-        actual_role = await self.auth_service.get_user_role(organization_id, self.current_user.id)
+    async def check_roles(
+        self, role: Roles, organization_id: str, silent: bool = False
+    ) -> bool | None:
+        actual_role = await self.auth_service.get_user_role(
+            organization_id, self.current_user.id
+        )
         if actual_role is Roles.read_only:
             if role is Roles.admin or role is Roles.write or role is Roles.owner:
                 if silent:
                     return False
-                raise CustomHTTPException(ExceptionCodes.NotEnoughPermissions, data=role.value)
+                raise CustomHTTPException(
+                    ExceptionCodes.NotEnoughPermissions, data=role.value
+                )
         elif actual_role is Roles.write:
             if role is Roles.admin or role is Roles.owner:
                 if silent:
                     return False
-                raise CustomHTTPException(ExceptionCodes.NotEnoughPermissions, data=role.value)
+                raise CustomHTTPException(
+                    ExceptionCodes.NotEnoughPermissions, data=role.value
+                )
         elif actual_role is Roles.admin:
             if role is Roles.owner:
                 if silent:
                     return False
-                raise CustomHTTPException(ExceptionCodes.NotEnoughPermissions, data=role.value)
+                raise CustomHTTPException(
+                    ExceptionCodes.NotEnoughPermissions, data=role.value
+                )
         if silent:
             return True
         else:
             return None
+
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-        self.set_header("Access-Control-Allow-Headers", "access-control-allow-origin,authorization,content-type,x-requested-with")
+        self.set_header(
+            "Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE"
+        )
+        self.set_header(
+            "Access-Control-Allow-Headers",
+            "access-control-allow-origin,authorization,content-type,x-requested-with",
+        )
 
     def options(self, query=None):
         # Обработка preflight запросов
@@ -86,7 +102,7 @@ class BaseHandler(ErrorHandler):
         return body
 
     async def prepare(self) -> Optional[Awaitable[None]]:
-        if self.request.method == 'OPTIONS':
+        if self.request.method == "OPTIONS":
             return
         if self.auth_enabled:
             token = self.request.headers.get("Authorization", None)
@@ -123,8 +139,8 @@ class BaseHandler(ErrorHandler):
             )
             if isinstance(chunk, list):
                 message += (
-                        ". Lists not accepted for security reasons; see "
-                        + "http://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.write"  # noqa: E501
+                    ". Lists not accepted for security reasons; see "
+                    + "http://www.tornadoweb.org/en/stable/web.html#tornado.web.RequestHandler.write"  # noqa: E501
                 )
             raise TypeError(message)
         if isinstance(chunk, dict):

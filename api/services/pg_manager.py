@@ -3,7 +3,7 @@ from api.repositories import (
     UsersRepository,
     FieldsRepository,
     AnalyzeRequestsRepository,
-    OrganizationsRepository
+    OrganizationsRepository,
     # TracksRepository,
     # SharesRepository
 )

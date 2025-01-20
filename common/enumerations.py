@@ -15,6 +15,7 @@ class DataStatus(str, Enum):
             data[k] = v.value
         return data
 
+
 class DataUploadedStatus(str, Enum):
     complete = "complete"
     partial = "partial"

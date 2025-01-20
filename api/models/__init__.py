@@ -6,7 +6,15 @@ from common.models.ndvi_result import NDVIResult
 from common.models.organization import Organization
 from common.models.cr_organizations_users import CrOrganizationsUsers
 
-__all__ = ["User", "Field", "AnalyzeRequest", "PlantsResult", "NDVIResult", "Organization", "CrOrganizationsUsers"]
+__all__ = [
+    "User",
+    "Field",
+    "AnalyzeRequest",
+    "PlantsResult",
+    "NDVIResult",
+    "Organization",
+    "CrOrganizationsUsers",
+]
 
 """
 The directory with shared models is displayed separately, but nevertheless, 

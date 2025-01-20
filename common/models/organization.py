@@ -1,5 +1,5 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import String, DateTime, Boolean, ARRAY, ForeignKey
+from sqlalchemy import String, DateTime, Boolean, ForeignKey
 from api.common import tools
 from datetime import datetime
 
@@ -31,12 +31,13 @@ class Organization(Base):
     members: Mapped[list["CrOrganizationsUsers"]] = relationship(
         "CrOrganizationsUsers",
         primaryjoin="Organization.id == CrOrganizationsUsers.organization_id",
-        lazy="selectin"
+        lazy="selectin",
     )
 
     def as_items_schema(self) -> UsersOrganizationItem:
         return UsersOrganizationItem(
             id=self.id,
             name=self.name,
-            users=[cr.user.as_schema_with_role(cr.role) for cr in self.members] + [self.owner.as_schema_with_role("owner")]
+            users=[cr.user.as_schema_with_role(cr.role) for cr in self.members]
+            + [self.owner.as_schema_with_role("owner")],
         )

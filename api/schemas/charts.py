@@ -12,9 +12,9 @@ class ChartData(BaseModel):
     type: ChartType
 
 
-class ChartValue(BaseModel):
-    value: float
-    dt: str
+class ChartValues(BaseModel):
+    values: list[float]
+    dts: list[str]
 
 
 class ChartSchema(BaseModel):
@@ -22,4 +22,4 @@ class ChartSchema(BaseModel):
     chart_type: ChartType
     from_dt: datetime.datetime
     to_dt: datetime.datetime
-    values: list[ChartValue]
+    data: ChartValues

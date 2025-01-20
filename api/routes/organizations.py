@@ -8,8 +8,18 @@ from api.common.enumerations import Roles
 
 class OrganizationsHandler(BaseHandler):
     async def get(self):
-        organizations = await self.pg.organizations.get_users_organizations_and_participants_count(self.current_user.id)
-        self.write({"organizations": [organization.as_items_schema() for organization in organizations]})
+        organizations = (
+            await self.pg.organizations.get_users_organizations_and_participants_count(
+                self.current_user.id
+            )
+        )
+        self.write(
+            {
+                "organizations": [
+                    organization.as_items_schema() for organization in organizations
+                ]
+            }
+        )
 
     async def post(self):
         data = self.get_body()
@@ -28,9 +38,11 @@ class OneOrganizationHandler(BaseHandler):
     async def get(self, organization_id):
         restrictions = RestrictionsSchema(
             edit=await self.check_roles(Roles.admin, organization_id, True),
-            delete=await self.check_roles(Roles.owner, organization_id, True)
+            delete=await self.check_roles(Roles.owner, organization_id, True),
         )
-        organization = await self.pg.organizations.get_organization_details_by_id(organization_id)
+        organization = await self.pg.organizations.get_organization_details_by_id(
+            organization_id
+        )
         organization.restrictions = restrictions
 
         self.write({"organization": organization})

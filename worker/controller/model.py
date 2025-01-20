@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Callable
 from worker.models.analyze_request import AnalyzeRequest
 import datetime
 from worker.utils.enumerations import AnalysisType

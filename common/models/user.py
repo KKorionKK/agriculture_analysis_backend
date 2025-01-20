@@ -1,5 +1,5 @@
 from sqlalchemy.orm import mapped_column, Mapped
-from sqlalchemy import String, DateTime, Integer, ARRAY
+from sqlalchemy import String, DateTime
 from api.common import tools
 from datetime import datetime
 
@@ -25,8 +25,5 @@ class User(Base):
 
     def as_schema_with_role(self, role: str):
         return UserSchemaWithRole(
-            id=self.id,
-            email=self.email,
-            last_online=self.last_online,
-            role=Roles(role)
+            id=self.id, email=self.email, last_online=self.last_online, role=Roles(role)
         )

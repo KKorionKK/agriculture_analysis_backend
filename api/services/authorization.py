@@ -32,7 +32,9 @@ class AuthorizationService:
         return encoded_jwt
 
     async def get_user_role(self, organization_id: str, user_id: str) -> Roles:
-        role = await self.pg.organizations.get_users_roles_in_organization(user_id, organization_id)
+        role = await self.pg.organizations.get_users_roles_in_organization(
+            user_id, organization_id
+        )
         return Roles(role)
 
     @staticmethod

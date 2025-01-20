@@ -9,11 +9,11 @@ class Vigilante:
     )
 
     def __init__(
-            self,
-            server_name: str = "server_name",
-            console_stream: bool = False,
-            log_in_file: bool = False,
-            directory: str = None,
+        self,
+        server_name: str = "server_name",
+        console_stream: bool = False,
+        log_in_file: bool = False,
+        directory: str = None,
     ) -> None:
         self.server_name = server_name
         self.console_stream = console_stream
@@ -40,10 +40,10 @@ class Vigilante:
 
     def get_file_handler(self):
         filename = (
-                self.server_name
-                + "_"
-                + datetime.datetime.now(datetime.timezone.utc).strftime("%d.%m.%Y")
-                + ".log"
+            self.server_name
+            + "_"
+            + datetime.datetime.now(datetime.timezone.utc).strftime("%d.%m.%Y")
+            + ".log"
         )
         path = os.path.join(self.directory, filename)
         file_handler = logging.FileHandler(path, "a", encoding="utf-8")
@@ -69,7 +69,7 @@ class VigilanteSingleton(Vigilante):
         return cls.__instance
 
     def __init__(self, *args, **kwargs):
-        if not hasattr(self, 'initialized'):
+        if not hasattr(self, "initialized"):
             super().__init__(*args, **kwargs)
 
     @classmethod

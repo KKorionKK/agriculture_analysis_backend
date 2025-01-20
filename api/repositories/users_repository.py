@@ -1,6 +1,6 @@
 from .base import Repository
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, or_
+from sqlalchemy import select, or_
 from api.models import User
 
 
@@ -31,9 +31,7 @@ class UsersRepository(Repository):
             )
             return result
 
-    async def create_user_by_email(
-        self, email: str, password_hash: str
-    ) -> User:
+    async def create_user_by_email(self, email: str, password_hash: str) -> User:
         async with self.client() as session:
             session: AsyncSession
             user = User(email=email, password=password_hash)

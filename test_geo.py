@@ -1,4 +1,4 @@
-from worker.analysis.geoprocessing import test, test3d
+from worker.analysis.geoprocessing import test3d
 
 
 test3d()

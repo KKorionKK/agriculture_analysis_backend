@@ -1,9 +1,8 @@
 from .base import Repository
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, desc
+from sqlalchemy import select, desc
 from sqlalchemy.orm import selectinload
 from api.models import AnalyzeRequest, User, NDVIResult, Field
-from sqlalchemy.orm import selectinload
 from api.common.enumerations import DataStatus
 
 from api.schemas.analyze_request import AnalyzeRequestCreate
@@ -35,9 +34,8 @@ class AnalyzeRequestsRepository(Repository):
                 (
                     (
                         await session.execute(
-                            select(AnalyzeRequest).where(
-                                AnalyzeRequest.field_id == field_id
-                            )
+                            select(AnalyzeRequest)
+                            .where(AnalyzeRequest.field_id == field_id)
                             .order_by(desc(AnalyzeRequest.created_at))
                         )
                     )
@@ -47,7 +45,9 @@ class AnalyzeRequestsRepository(Repository):
             )
             return result
 
-    async def get_requests_mean_ndvi_by_organization_fields(self, organization_id: str) -> float:
+    async def get_requests_mean_ndvi_by_organization_fields(
+        self, organization_id: str
+    ) -> float:
         async with self.client() as session:
             session: AsyncSession
             result: list[dict] = list(
@@ -55,9 +55,14 @@ class AnalyzeRequestsRepository(Repository):
                     (
                         await session.execute(
                             select(NDVIResult.reports)
-                            .join(AnalyzeRequest, AnalyzeRequest.ndvi_result_id == NDVIResult.id)
+                            .join(
+                                AnalyzeRequest,
+                                AnalyzeRequest.ndvi_result_id == NDVIResult.id,
+                            )
                             .join(Field, Field.id == AnalyzeRequest.field_id)
-                            .where(Field.organization_id == organization_id)  # TODO: смотреть по последним анализам
+                            .where(
+                                Field.organization_id == organization_id
+                            )  # TODO: смотреть по последним анализам
                         )
                     )
                     .scalars()
@@ -65,7 +70,12 @@ class AnalyzeRequestsRepository(Repository):
                 )
             )
             determinant = len(result)
-            numerator = sum([sum([report['affected_percentage'] for report in item]) for item in result])
+            numerator = sum(
+                [
+                    sum([report["affected_percentage"] for report in item])
+                    for item in result
+                ]
+            )
             return round(numerator / determinant / 1000, 2)
 
     async def get_last_request_by_field(self, field_id: str) -> AnalyzeRequest | None:
@@ -74,11 +84,13 @@ class AnalyzeRequestsRepository(Repository):
             result = (
                 (
                     await session.execute(
-                        select(AnalyzeRequest).where(
-                            AnalyzeRequest.field_id == field_id
-                        )
+                        select(AnalyzeRequest)
+                        .where(AnalyzeRequest.field_id == field_id)
                         .order_by(desc(AnalyzeRequest.created_at))
-                        .options(selectinload(AnalyzeRequest.plants_result), selectinload(AnalyzeRequest.ndvi_result))
+                        .options(
+                            selectinload(AnalyzeRequest.plants_result),
+                            selectinload(AnalyzeRequest.ndvi_result),
+                        )
                     )
                 )
                 .scalars()

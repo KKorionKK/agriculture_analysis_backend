@@ -1,7 +1,6 @@
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import String, DateTime, Boolean, Enum, ForeignKey
+from sqlalchemy import String, Enum, ForeignKey
 from api.common import tools
-from datetime import datetime
 
 from api.common.enumerations import Roles
 
@@ -12,9 +11,15 @@ class CrOrganizationsUsers(Base):
     __tablename__ = "cr_organizations_users"
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=tools.get_uuid)
-    organization_id: Mapped[str] = mapped_column(String, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
-    user_id: Mapped[str] = mapped_column(String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    role: Mapped[str] = mapped_column(Enum(*Roles._member_names_, name=Roles.__name__), nullable=False)
+    organization_id: Mapped[str] = mapped_column(
+        String, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id: Mapped[str] = mapped_column(
+        String, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    role: Mapped[str] = mapped_column(
+        Enum(*Roles._member_names_, name=Roles.__name__), nullable=False
+    )
 
     user: Mapped["User"] = relationship(
         "User",
@@ -26,6 +31,3 @@ class CrOrganizationsUsers(Base):
         remote_side="Organization.id",  # type: ignore  # noqa: F821
         primaryjoin="Organization.id == CrOrganizationsUsers.organization_id",
     )
-
-
-

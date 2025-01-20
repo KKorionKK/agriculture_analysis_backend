@@ -4,7 +4,6 @@ from worker.utils.enumerations import AnalysisType
 from worker.controller import InstanceController
 from worker.utils.database import SyncPostgreSQLController
 from worker.models import AnalyzeRequest
-from worker.utils.wrapper import exception_manager
 
 from worker.analysis.ndvi import NDVIAnalyzer
 
@@ -25,7 +24,7 @@ class Master:
         workers: int,
         database: SyncPostgreSQLController,
         logger: Logger,
-        current_directory: str
+        current_directory: str,
     ):
         credentials = pika.PlainCredentials(config.AMQP_USERNAME, config.AMQP_PASSWORD)
         self.connection = pika.BlockingConnection(

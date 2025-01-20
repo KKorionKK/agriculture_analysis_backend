@@ -3,7 +3,6 @@ import boto3
 from uuid import uuid4
 from io import BytesIO
 
-from api.common.exceptions import ExceptionCodes, CustomHTTPException
 
 S3_ACCESS_ID = "C26MAFLVNUMGK8RFV5SS"
 S3_SECRET_KEY = "DshkL9P6lYUGALHmcyDstsNlLBEO3etRqKFuzLzC"

@@ -6,5 +6,5 @@ setup(
     packages=find_packages(),
     install_requires=[
         "sqlalchemy>=1.4.0",
-    ]
+    ],
 )

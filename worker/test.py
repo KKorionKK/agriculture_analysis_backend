@@ -13,22 +13,23 @@ def test():
     ndvi = NDVIAnalyzer(v.get_logger(), db, "huitest")
     ext = Extractor()
 
-    task_id = '7ab75263-7667-480b-8afe-5611055c1b91'
+    task_id = "7ab75263-7667-480b-8afe-5611055c1b91"
     with db() as session:
         task = session.get(AnalyzeRequest, task_id)
 
     # zip_path = ext.download(task.origin_ndvi_data, task_id)
     # extracted = ext.extract(zip_path, task_id)
 
-
-    extracted = '/Users/kkorionkk/PycharmProjects/agriculture_analysis/worker/zips/7ab75263-7667-480b-8afe-5611055c1b91'
+    extracted = "/Users/kkorionkk/PycharmProjects/agriculture_analysis/worker/zips/7ab75263-7667-480b-8afe-5611055c1b91"
     ndvi.analyze(extracted, task)
 
+
 def test_extract():
-    path = '/Users/kkorionkk/Downloads/archive (1)/Archive.zip'
+    path = "/Users/kkorionkk/Downloads/archive (1)/Archive.zip"
     ext = Extractor()
-    return ext.extract(path, 'huihui')
+    return ext.extract(path, "huihui")
     # ext.delete_dir('/Users/kkorionkk/PycharmProjects/agriculture_analysis/worker/zips/huihui')
+
 
 if __name__ == "__main__":
     test()

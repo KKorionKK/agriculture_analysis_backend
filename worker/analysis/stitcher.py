@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 import os
 from exif import Image
 
@@ -7,7 +6,7 @@ from exif import Image
 def read_image_with_metadata(image_path):
     # Чтение изображения и его метаданных
     img = cv2.imread(image_path)
-    with open(image_path, 'rb') as img_file:
+    with open(image_path, "rb") as img_file:
         metadata = Image(img_file)
     return img, metadata
 
@@ -45,7 +44,11 @@ def stitch_images(image_paths):
 
 # Использование
 image_folder = "/Users/kkorionkk/Курсач/Тестовые данные/архив/rgb"
-image_paths = [os.path.join(image_folder, f) for f in os.listdir(image_folder) if f.endswith(('.JPG', '.jpeg', '.png'))]
+image_paths = [
+    os.path.join(image_folder, f)
+    for f in os.listdir(image_folder)
+    if f.endswith((".JPG", ".jpeg", ".png"))
+]
 result = stitch_images(image_paths)
 
 if result is not None:

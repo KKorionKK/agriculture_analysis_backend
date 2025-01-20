@@ -13,6 +13,8 @@ from api.common.enumerations import Roles, DataStatus
 
 import dataclasses
 from typing import Tuple
+
+
 @dataclasses.dataclass
 class NDVIResultDTO:
     affected_percentage: float
@@ -24,12 +26,17 @@ class NDVIResultDTO:
     def as_dict(self):
         return dataclasses.asdict(self)
 
+
 class DataGenerator:
     main_user_roles = ["admin", "write", "read_only"]
     others_users_roles = [*Roles._member_names_]
-    __emails_path = '/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/emails.txt'
-    __fields_path = '/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/fields.txt'
-    __organizations_path = '/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/organizations.txt'
+    __emails_path = (
+        "/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/emails.txt"
+    )
+    __fields_path = (
+        "/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/fields.txt"
+    )
+    __organizations_path = "/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/organizations.txt"
 
     FIELDS_PER_ORGANIZATION_ON_USER = 1
     MAIN_USER_IN_ORGANIZATIONS = 3
@@ -41,8 +48,10 @@ class DataGenerator:
         self.__load_data(self.__emails_path, self.emails)
         self.__load_data(self.__fields_path, self.fields)
         self.__load_data(self.__organizations_path, self.organizations)
-        self.__log_filepath = '/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/log.txt'
-        self.__dump_filepath = '/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/dump.pickle'
+        self.__log_filepath = (
+            "/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/log.txt"
+        )
+        self.__dump_filepath = "/Users/kkorionkk/PycharmProjects/agriculture_analysis/api/mocks/dump.pickle"
         self.__clear_log_file()
 
         self.users_in_organizations = None
@@ -53,22 +62,18 @@ class DataGenerator:
             os.remove(self.__log_filepath)
 
     def __log(self, data: list[str]):
-        with open(self.__log_filepath, 'x+') as f:
+        with open(self.__log_filepath, "x+") as f:
             for line in data:
                 f.write(line + "\n")
             f.write("\n______________________________\n\n")
 
     def __dump(self, **kwargs):
-        with open(self.__dump_filepath, 'wb') as f:
-            dump = pickle.dumps(
-                {
-                    **kwargs
-                }
-            )
+        with open(self.__dump_filepath, "wb") as f:
+            dump = pickle.dumps({**kwargs})
             f.write(dump)
 
     def __load_dump(self):
-        with open(self.__dump_filepath, 'rb') as f:
+        with open(self.__dump_filepath, "rb") as f:
             buffer = f.read()
             dump = pickle.loads(buffer)
             return dump
@@ -76,25 +81,25 @@ class DataGenerator:
     def __load_data(self, path: str, target: list[str]):
         with open(path) as f:
             for line in f.readlines():
-                target.append(line.split('. ')[-1].strip())
+                target.append(line.split(". ")[-1].strip())
 
     def __create_main_test_user(self) -> User:
         return User(
             id=uuid.uuid4().hex,
             email="user@mail.com",
             password="$2b$12$5VQ8jdut4ZGDCsZUFy1ZuOTGQfQ9vY.p8GragUL3Fwc7w1nPnAUcS",  # 1234
-            type="user"
+            type="user",
         )
 
     async def commit_to_database(
-            self,
-            users: list[User],
-            organizations: list[Organization],
-            crs: list[CrOrganizationsUsers],
-            fields: list[Field],
-            analrequests: list[AnalyzeRequest],
-            ndvis: list[NDVIResult],
-            plants: list[PlantsResult]
+        self,
+        users: list[User],
+        organizations: list[Organization],
+        crs: list[CrOrganizationsUsers],
+        fields: list[Field],
+        analrequests: list[AnalyzeRequest],
+        ndvis: list[NDVIResult],
+        plants: list[PlantsResult],
     ):
         pg = PostgreSQLController(True)
         await pg.drop_db()
@@ -113,11 +118,19 @@ class DataGenerator:
     def __add_main_user_fields(self, main_user: User, fields: list[Field]) -> None:
         self.users_fields[main_user.id] = fields
 
-    async def create_mock_database(self, organizations_count: int = 10, users_count: int = 50, fields_count: int = 100, requests_count: int = 200) -> None:
+    async def create_mock_database(
+        self,
+        organizations_count: int = 10,
+        users_count: int = 50,
+        fields_count: int = 100,
+        requests_count: int = 200,
+    ) -> None:
         users = await self.create_users(users_count)
         main_user = self.__create_main_test_user()
         main_user_fields = self.create_main_user_fields(main_user)
-        organizations, crs = await self.create_organizations(main_user, users, organizations_count)
+        organizations, crs = await self.create_organizations(
+            main_user, users, organizations_count
+        )
         fields = await self.create_fields(users, main_user_fields)
 
         self.__add_main_user_fields(main_user, main_user_fields)
@@ -132,7 +145,7 @@ class DataGenerator:
             ndvis=ndvis,
             plants=plants,
             crs=crs,
-            main_user_fields=main_user_fields
+            main_user_fields=main_user_fields,
         )
         # d = self.__load_dump()
         # users = d['users']
@@ -145,7 +158,6 @@ class DataGenerator:
         # plants = d['plants']
         # crs = d['crs']
 
-
         await self.commit_to_database(
             users=users + [main_user],
             fields=fields + main_user_fields,
@@ -153,22 +165,21 @@ class DataGenerator:
             crs=crs,
             analrequests=analrequests,
             ndvis=ndvis,
-            plants=plants
+            plants=plants,
         )
-
 
     async def create_users(self, count: int) -> list[User]:
         users: list[User] = []
         log_data: list[str] = []
         for i in range(count):
             # pwd = ''.join([str(random.randint(0, 100)) for i in range(10)])
-            pwd = '12345'
+            pwd = "12345"
             users.append(
                 User(
                     id=uuid.uuid4().hex,
                     email=self.emails[i],
                     password=AuthorizationService.hash_password(pwd),
-                    type="user"
+                    type="user",
                 )
             )
             log_data.append(f"User created: {self.emails[i]} and has password: {pwd}")
@@ -179,42 +190,48 @@ class DataGenerator:
         return [
             Field(
                 id=uuid.uuid4().hex,
-                name='Тестовое поле',
-                color='#088',
+                name="Тестовое поле",
+                color="#088",
                 coordinates=[
                     {"latitude": 55.773097205876795, "longitude": 37.53753662109376},
                     {"latitude": 55.7309766355099, "longitude": 37.53753662109376},
                     {"latitude": 55.73484280305744, "longitude": 37.770309448242195},
-                    {"latitude": 55.80205284218845, "longitude": 37.76893615722656}
+                    {"latitude": 55.80205284218845, "longitude": 37.76893615722656},
                 ],
                 area=224,
-                owner_id=user.id
+                owner_id=user.id,
             ),
             Field(
                 id=uuid.uuid4().hex,
-                name='Тестовое поле 2',
-                color='#088',
+                name="Тестовое поле 2",
+                color="#088",
                 coordinates=[
                     {"latitude": 55.873097205876795, "longitude": 37.63753662109376},
                     {"latitude": 55.8309766355099, "longitude": 37.63753662109376},
                     {"latitude": 55.83484280305744, "longitude": 37.870309448242195},
-                    {"latitude": 55.90205284218845, "longitude": 37.86893615722656}
+                    {"latitude": 55.90205284218845, "longitude": 37.86893615722656},
                 ],
                 area=224,
-                owner_id=user.id
-            )
+                owner_id=user.id,
+            ),
         ]
 
-    async def __sweet_disposition(self, users: list[User], organizations_count: int) -> dict[int, list[str]]:
+    async def __sweet_disposition(
+        self, users: list[User], organizations_count: int
+    ) -> dict[int, list[str]]:
         result: dict[int, list[str]] = {k: [] for k in range(organizations_count)}
         users_cp = copy.deepcopy(users)
 
         while users_cp:
-            result[random.randint(0, organizations_count - 1)].append(users_cp.pop(0).id)
+            result[random.randint(0, organizations_count - 1)].append(
+                users_cp.pop(0).id
+            )
 
         return result
 
-    async def create_organizations(self, main_user: User, users: list[User], organizations_count: int):
+    async def create_organizations(
+        self, main_user: User, users: list[User], organizations_count: int
+    ):
         organizations: list[Organization] = []
         cr_items: list[CrOrganizationsUsers] = []
 
@@ -227,7 +244,7 @@ class DataGenerator:
                 id=uuid.uuid4().hex,
                 name=self.organizations[i],
                 is_public=is_public,
-                owner_id=disposition[i].pop(0) if main_owner else main_user.id
+                owner_id=disposition[i].pop(0) if main_owner else main_user.id,
             )
             organizations.append(org)
             main_owner = True
@@ -236,19 +253,26 @@ class DataGenerator:
         org_counter = 0
         main_organizations = 0
 
-
-        while len(cr_items) <= len(users) + self.MAIN_USER_IN_ORGANIZATIONS - organizations_count:
+        while (
+            len(cr_items)
+            <= len(users) + self.MAIN_USER_IN_ORGANIZATIONS - organizations_count
+        ):
             if org_counter == organizations_count:
                 org_counter = 0
-            if main_organizations < self.MAIN_USER_IN_ORGANIZATIONS and organizations[org_counter].owner_id != main_user.id:
+            if (
+                main_organizations < self.MAIN_USER_IN_ORGANIZATIONS
+                and organizations[org_counter].owner_id != main_user.id
+            ):
                 cr_items.append(
                     CrOrganizationsUsers(
                         organization_id=organizations[org_counter].id,
                         user_id=main_user.id,
-                        role=random.choice(self.main_user_roles)
+                        role=random.choice(self.main_user_roles),
                     )
                 )
-                users_in_organizations[organizations[org_counter].id].append(main_user.id)
+                users_in_organizations[organizations[org_counter].id].append(
+                    main_user.id
+                )
                 org_counter += 1
                 main_organizations += 1
             else:
@@ -258,10 +282,12 @@ class DataGenerator:
                         CrOrganizationsUsers(
                             organization_id=organizations[org_counter].id,
                             user_id=this_user_id,
-                            role=random.choice(self.main_user_roles)
+                            role=random.choice(self.main_user_roles),
                         )
                     )
-                    users_in_organizations[organizations[org_counter].id].append(this_user_id)
+                    users_in_organizations[organizations[org_counter].id].append(
+                        this_user_id
+                    )
                     org_counter += 1
                 else:
                     org_counter += 1
@@ -280,7 +306,9 @@ class DataGenerator:
                 return k
         return None
 
-    async def create_fields(self, users: list[User], main_user_fields: list[Field]) -> list[Field]:
+    async def create_fields(
+        self, users: list[User], main_user_fields: list[Field]
+    ) -> list[Field]:
         fields: list[Field] = []
         fc = 0
         users_fields = {user.id: [] for user in users}
@@ -291,36 +319,60 @@ class DataGenerator:
             if organization_id:
                 with_org += 1
             else:
-                print(f'User {user.email} has no organization')
+                print(f"User {user.email} has no organization")
             field1 = Field(
                 id=uuid.uuid4().hex,
                 name=self.fields[fc],
-                color='#088',
+                color="#088",
                 coordinates=[
-                    {"latitude": 55.573097205876795 + deviation, "longitude": 37.33753662109376 + deviation},
-                    {"latitude": 55.5309766355099 + deviation, "longitude": 37.33753662109376 + deviation},
-                    {"latitude": 55.53484280305744 + deviation, "longitude": 37.570309448242195 + deviation},
-                    {"latitude": 55.60205284218845 + deviation, "longitude": 37.56893615722656 + deviation}
+                    {
+                        "latitude": 55.573097205876795 + deviation,
+                        "longitude": 37.33753662109376 + deviation,
+                    },
+                    {
+                        "latitude": 55.5309766355099 + deviation,
+                        "longitude": 37.33753662109376 + deviation,
+                    },
+                    {
+                        "latitude": 55.53484280305744 + deviation,
+                        "longitude": 37.570309448242195 + deviation,
+                    },
+                    {
+                        "latitude": 55.60205284218845 + deviation,
+                        "longitude": 37.56893615722656 + deviation,
+                    },
                 ],
                 organization_id=organization_id,
                 area=224,
-                owner_id=user.id
+                owner_id=user.id,
             )
             fc += 1
             deviation = random.uniform(-0.5, 0.5)
             field2 = Field(
                 id=uuid.uuid4().hex,
                 name=self.fields[fc],
-                color='#088',
+                color="#088",
                 coordinates=[
-                    {"latitude": 55.573097205876795 + deviation, "longitude": 37.33753662109376 + deviation},
-                    {"latitude": 55.5309766355099 + deviation, "longitude": 37.33753662109376 + deviation},
-                    {"latitude": 55.53484280305744 + deviation, "longitude": 37.570309448242195 + deviation},
-                    {"latitude": 55.60205284218845 + deviation, "longitude": 37.56893615722656 + deviation}
+                    {
+                        "latitude": 55.573097205876795 + deviation,
+                        "longitude": 37.33753662109376 + deviation,
+                    },
+                    {
+                        "latitude": 55.5309766355099 + deviation,
+                        "longitude": 37.33753662109376 + deviation,
+                    },
+                    {
+                        "latitude": 55.53484280305744 + deviation,
+                        "longitude": 37.570309448242195 + deviation,
+                    },
+                    {
+                        "latitude": 55.60205284218845 + deviation,
+                        "longitude": 37.56893615722656 + deviation,
+                    },
                 ],
                 organization_id=organization_id,
                 area=224,
-                owner_id=user.id
+                owner_id=user.id,
             )
             users_fields[user.id].append(field1)
             users_fields[user.id].append(field2)
@@ -351,10 +403,12 @@ class DataGenerator:
             reports=self.create_reports(),
             heatmaps=[],
             issuer_id=field.owner_id,
-            created_at=created_at
+            created_at=created_at,
         )
 
-    def __create_plants(self, field: Field, created_at: datetime.datetime) -> PlantsResult:
+    def __create_plants(
+        self, field: Field, created_at: datetime.datetime
+    ) -> PlantsResult:
         return PlantsResult(
             id=uuid.uuid4().hex,
             report=NDVIResultDTO(
@@ -366,10 +420,12 @@ class DataGenerator:
             ).as_dict(),
             artifacts=[],
             issuer_id=field.owner_id,
-            created_at=created_at
+            created_at=created_at,
         )
 
-    async def create_requests(self, users: list[User], requests_count_per_field: int = 10):
+    async def create_requests(
+        self, users: list[User], requests_count_per_field: int = 10
+    ):
         analrequests: list[AnalyzeRequest] = []
         ndvis: list[NDVIResult] = []
         plants: list[PlantsResult] = []
@@ -384,8 +440,11 @@ class DataGenerator:
                     this_plants = bool(random.randint(0, 1))
                     # this_failed = bool(random.randint(0, 1))
 
-                    created_at = (datetime.datetime.now(datetime.timezone.utc) +
-                                  random.choice([-1, 1]) * datetime.timedelta(days=random.randint(1, 15)))
+                    created_at = datetime.datetime.now(
+                        datetime.timezone.utc
+                    ) + random.choice([-1, 1]) * datetime.timedelta(
+                        days=random.randint(1, 15)
+                    )
 
                     if this_ndvi:
                         ndvi = self.__create_ndvi(field, created_at)
@@ -393,7 +452,6 @@ class DataGenerator:
                     if this_plants:
                         plant = self.__create_plants(field, created_at)
                         plants.append(plant)
-
 
                     request = AnalyzeRequest(
                         id=uuid.uuid4().hex,
@@ -406,7 +464,7 @@ class DataGenerator:
                         ndvi_result_id=ndvi.id if ndvi else None,
                         plants_result_id=plant.id if plant else None,
                         issuer_id=user.id,
-                        created_at=created_at
+                        created_at=created_at,
                     )
                     analrequests.append(request)
         return analrequests, ndvis, plants

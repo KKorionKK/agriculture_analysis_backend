@@ -2,7 +2,6 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from api.common.enumerations import DataStatus
-from api.schemas.analyze_request import AnalyzeRequestSchema
 
 from api.schemas.charts import ChartSchema
 
@@ -30,7 +29,7 @@ class FieldExtendedSchema(BaseModel):
     name: str
     color: str | None = None
     coordinates: list[Coordinate] | None = None
-    analysis_dt: datetime | None  = None
+    analysis_dt: datetime | None = None
     health_status: str | None
     data_status: str | None
 
@@ -59,15 +58,14 @@ class NDVIReport(BaseModel):
     @classmethod
     def from_dict(cls, data: dict):
         return cls(
-            affected_percentage=data.get('affected_percentage', None),
-            plants_percentage=data.get('plants_percentage', None),
-            ndvi=data.get('ndvi', None),
-            ndvi_map=data.get('ndvi_map', None),
-            problems_map=data.get('problems_map', None),
-            latitude=data.get('latitude', None),
-            longitude=data.get('longitude', None)
+            affected_percentage=data.get("affected_percentage", None),
+            plants_percentage=data.get("plants_percentage", None),
+            ndvi=data.get("ndvi", None),
+            ndvi_map=data.get("ndvi_map", None),
+            problems_map=data.get("problems_map", None),
+            latitude=data.get("latitude", None),
+            longitude=data.get("longitude", None),
         )
-
 
 
 class NDVIAnalysisSchema(BaseModel):
@@ -107,6 +105,3 @@ class FieldDetailSchema(BaseModel):
 
     analrequests: list[AnalysisRequest]
     chart: ChartSchema | None = None
-
-
-

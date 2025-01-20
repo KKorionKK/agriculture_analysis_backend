@@ -17,4 +17,4 @@ class AuthorizationHandler(BaseHandler):
 class AuthorizationStatusHandler(BaseHandler):
 
     async def get(self):
-        self.write({'status': 'OK'})
+        self.write({"status": "OK"})

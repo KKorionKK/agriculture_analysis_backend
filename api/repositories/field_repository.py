@@ -1,12 +1,20 @@
 from .base import Repository
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, and_, delete, func
+from sqlalchemy import select, and_, delete, func
 from api.models import Field, User, AnalyzeRequest, NDVIResult, PlantsResult
 
 from api.common.enumerations import DataUploadedStatus, HealthStatus, DataStatus
 
-from api.schemas.fields import FieldCreateSchema, FieldExtendedSchema, FieldDetailSchema, AnalysisRequest, \
-    NDVIAnalysisSchema, PlantsAnalysisSchema, NDVIReport, FieldExtendedWithMeanValuesSchema
+from api.schemas.fields import (
+    FieldCreateSchema,
+    FieldExtendedSchema,
+    FieldDetailSchema,
+    AnalysisRequest,
+    NDVIAnalysisSchema,
+    PlantsAnalysisSchema,
+    NDVIReport,
+    FieldExtendedWithMeanValuesSchema,
+)
 
 
 class FieldsRepository(Repository):
@@ -33,7 +41,9 @@ class FieldsRepository(Repository):
                 (
                     (
                         await session.execute(
-                            select(Field.id, func.count()).where(Field.owner_id == user_id)
+                            select(Field.id, func.count()).where(
+                                Field.owner_id == user_id
+                            )
                         )
                     )
                     .scalars()
@@ -46,19 +56,21 @@ class FieldsRepository(Repository):
         async with self.client() as session:
             session: AsyncSession
             result = (
-                    (
-                        await session.execute(
-                            select(Field.id, func.count()).where(Field.organization_id == organization_id)
-                            .group_by(Field.id)
-                        )
+                (
+                    await session.execute(
+                        select(Field.id, func.count())
+                        .where(Field.organization_id == organization_id)
+                        .group_by(Field.id)
                     )
-                    .scalars()
-                    .all()
                 )
+                .scalars()
+                .all()
+            )
             return len(result) if result else 0
 
-    async def __construct_data(self, fields: list[Field], requests: list[AnalyzeRequest]) -> list[
-                                                                                                 FieldExtendedSchema] | list:
+    async def __construct_data(
+        self, fields: list[Field], requests: list[AnalyzeRequest]
+    ) -> list[FieldExtendedSchema] | list:
         schemas = []
         for i in range(len(fields)):
             if not requests[i]:
@@ -67,10 +79,10 @@ class FieldsRepository(Repository):
                         id=fields[i].id,
                         name=fields[i].name,
                         analysis_dt=fields[i].last_analysed,
-                        health_status='Нет данных',
+                        health_status="Нет данных",
                         data_status=DataUploadedStatus.missing,
                         color=fields[i].color,
-                        coordinates=fields[i].coordinates
+                        coordinates=fields[i].coordinates,
                     )
                 )
                 continue
@@ -93,9 +105,9 @@ class FieldsRepository(Repository):
 
             if requests[i].ndvi_result:
                 for report in requests[i].ndvi_result.reports:
-                    if report['affected_percentage'] >= 50:
+                    if report["affected_percentage"] >= 50:
                         health_status = HealthStatus.critical
-                    if report['affected_percentage'] >= 25:
+                    if report["affected_percentage"] >= 25:
                         health_status = HealthStatus.need_attention
 
             schemas.append(
@@ -109,7 +121,9 @@ class FieldsRepository(Repository):
             )
         return schemas
 
-    async def get_extended_fields_data_by_user(self, user_id: str) -> list[FieldExtendedSchema] | list:
+    async def get_extended_fields_data_by_user(
+        self, user_id: str
+    ) -> list[FieldExtendedSchema] | list:
         async with self.client() as session:
             session: AsyncSession
             fields = list(
@@ -123,11 +137,16 @@ class FieldsRepository(Repository):
                     .all()
                 )
             )
-            requests = [await self.manager.analrequests.get_last_request_by_field(field.id) for field in fields]
+            requests = [
+                await self.manager.analrequests.get_last_request_by_field(field.id)
+                for field in fields
+            ]
 
             return await self.__construct_data(fields, requests)
 
-    async def get_extended_fields_data_by_user_with_avg_values(self, user_id: str) -> list[FieldExtendedWithMeanValuesSchema] | list:
+    async def get_extended_fields_data_by_user_with_avg_values(
+        self, user_id: str
+    ) -> list[FieldExtendedWithMeanValuesSchema] | list:
         async with self.client() as session:
             session: AsyncSession
             fields = list(
@@ -141,11 +160,16 @@ class FieldsRepository(Repository):
                     .all()
                 )
             )
-            requests = [await self.manager.analrequests.get_last_request_by_field(field.id) for field in fields]
+            requests = [
+                await self.manager.analrequests.get_last_request_by_field(field.id)
+                for field in fields
+            ]
 
             return await self.__construct_avg_data(fields, requests)
 
-    async def __construct_avg_data(self, fields: list[Field], requests: list[AnalyzeRequest]) -> list[FieldExtendedWithMeanValuesSchema]:
+    async def __construct_avg_data(
+        self, fields: list[Field], requests: list[AnalyzeRequest]
+    ) -> list[FieldExtendedWithMeanValuesSchema]:
         schemas: list[FieldExtendedWithMeanValuesSchema] = []
         for i in range(len(fields)):
             if not requests[i]:
@@ -158,7 +182,7 @@ class FieldsRepository(Repository):
                         mean_ndvi=0,
                         mean_health=0,
                         mean_disease=0,
-                        area=fields[i].area
+                        area=fields[i].area,
                     )
                 )
                 continue
@@ -167,13 +191,35 @@ class FieldsRepository(Repository):
             mean_disease = 0
             if requests[i].ndvi_result:
                 mean_ndvi = round(
-                    sum([report['affected_percentage'] for report in requests[i].ndvi_result.reports]) / len(
-                        requests[i].ndvi_result.reports), 2)
+                    sum(
+                        [
+                            report["affected_percentage"]
+                            for report in requests[i].ndvi_result.reports
+                        ]
+                    )
+                    / len(requests[i].ndvi_result.reports),
+                    2,
+                )
                 mean_health = round(
-                    sum([report['plants_percentage'] for report in requests[i].ndvi_result.reports]) / len(
-                        requests[i].ndvi_result.reports), 2)
-                mean_disease = round(sum([report['affected_percentage'] for report in requests[i].ndvi_result.reports]) / len(
-                    requests[i].ndvi_result.reports), 2)
+                    sum(
+                        [
+                            report["plants_percentage"]
+                            for report in requests[i].ndvi_result.reports
+                        ]
+                    )
+                    / len(requests[i].ndvi_result.reports),
+                    2,
+                )
+                mean_disease = round(
+                    sum(
+                        [
+                            report["affected_percentage"]
+                            for report in requests[i].ndvi_result.reports
+                        ]
+                    )
+                    / len(requests[i].ndvi_result.reports),
+                    2,
+                )
 
             schemas.append(
                 FieldExtendedWithMeanValuesSchema(
@@ -184,7 +230,7 @@ class FieldsRepository(Repository):
                     mean_ndvi=mean_ndvi,
                     mean_health=mean_health,
                     mean_disease=mean_disease,
-                    area=fields[i].area
+                    area=fields[i].area,
                 )
             )
         return schemas
@@ -215,44 +261,64 @@ class FieldsRepository(Repository):
         return ndvi_reports[mx_i].longitude, ndvi_reports[mx_i].latitude
 
     async def _collect_additional_data(self, field_id: str) -> list[AnalysisRequest]:
-        requests: list[AnalyzeRequest] = await self.manager.analrequests.get_requests_by_field(field_id)
+        requests: list[AnalyzeRequest] = (
+            await self.manager.analrequests.get_requests_by_field(field_id)
+        )
         schemas: list[AnalysisRequest] = []
         async with self.client() as session:
             session: AsyncSession
             for request in requests:
-                ndvi: NDVIResult = (await session.execute(
-                    select(NDVIResult)
-                    .where(NDVIResult.id == request.ndvi_result_id)
-                )).scalars().first()
+                ndvi: NDVIResult = (
+                    (
+                        await session.execute(
+                            select(NDVIResult).where(
+                                NDVIResult.id == request.ndvi_result_id
+                            )
+                        )
+                    )
+                    .scalars()
+                    .first()
+                )
                 ndvi_schema = None
-                plants: PlantsResult = (await session.execute(
-                    select(PlantsResult)
-                    .where(PlantsResult.id == request.plants_result_id)
-                )).scalars().first()
+                plants: PlantsResult = (
+                    (
+                        await session.execute(
+                            select(PlantsResult).where(
+                                PlantsResult.id == request.plants_result_id
+                            )
+                        )
+                    )
+                    .scalars()
+                    .first()
+                )
                 plants_schema = None
                 if ndvi:
                     ndvi_schema = NDVIAnalysisSchema(
                         id=ndvi.id,
                         gis_file=ndvi.gis_file,
-                        reports=[NDVIReport.from_dict(item) for item in ndvi.reports]
+                        reports=[NDVIReport.from_dict(item) for item in ndvi.reports],
                     )
-                if plants: # TODO: переделать
+                if plants:  # TODO: переделать
                     plants_schema = PlantsAnalysisSchema(
-                        id=plants.id,
-                        gis_file=plants.gis_file,
-                        reports=plants.report
+                        id=plants.id, gis_file=plants.gis_file, reports=plants.report
                     )
 
-                schemas.append(AnalysisRequest(
-                    request_id=request.id,
-                    requested_dt=request.created_at,
-                    ndvi_analyze_status=request.ndvi_status,
-                    plants_analyze_status=request.plants_status,
-                    fail_info=request.fail_info,
-                    disease_focus=await self._define_disease_focus(ndvi_schema.reports) if ndvi else None,
-                    ndvi=ndvi_schema,
-                    plant=plants_schema
-                ))
+                schemas.append(
+                    AnalysisRequest(
+                        request_id=request.id,
+                        requested_dt=request.created_at,
+                        ndvi_analyze_status=request.ndvi_status,
+                        plants_analyze_status=request.plants_status,
+                        fail_info=request.fail_info,
+                        disease_focus=(
+                            await self._define_disease_focus(ndvi_schema.reports)
+                            if ndvi
+                            else None
+                        ),
+                        ndvi=ndvi_schema,
+                        plant=plants_schema,
+                    )
+                )
         return schemas
 
     async def _calc_last_avg_data(self, data: list[AnalysisRequest]):
@@ -280,20 +346,30 @@ class FieldsRepository(Repository):
 
         return avg_ndvi, avg_vegetation, avg_decease
 
-
-    async def get_field_details(self, field_id: str, user_id: str) -> FieldDetailSchema | None:
+    async def get_field_details(
+        self, field_id: str, user_id: str
+    ) -> FieldDetailSchema | None:
         async with self.client() as session:
             session: AsyncSession
-            field: Field | None = (await session.execute(
-                select(Field)
-                .where(and_(Field.id == field_id, Field.owner_id == user_id))
-            )).scalars().first()
+            field: Field | None = (
+                (
+                    await session.execute(
+                        select(Field).where(
+                            and_(Field.id == field_id, Field.owner_id == user_id)
+                        )
+                    )
+                )
+                .scalars()
+                .first()
+            )
 
             if not field:
                 return None
 
             analysis = await self._collect_additional_data(field_id)
-            avg_ndvi, avg_vegetation, avg_decease = await self._calc_last_avg_data(analysis)
+            avg_ndvi, avg_vegetation, avg_decease = await self._calc_last_avg_data(
+                analysis
+            )
 
             return FieldDetailSchema(
                 id=field.id,
@@ -303,17 +379,15 @@ class FieldsRepository(Repository):
                 avg_ndvi=avg_ndvi,
                 avg_vegetation=avg_vegetation,
                 avg_decease=avg_decease,
-                analrequests=analysis
+                analrequests=analysis,
             )
 
     async def delete_field_by_id(self, field_id: str, user_id: str):
         async with self.client() as session:
             session: AsyncSession
             await session.execute(
-                delete(Field)
-                .where(and_(
-                    Field.id == field_id,
-                    Field.owner_id == user_id
-                ))
+                delete(Field).where(
+                    and_(Field.id == field_id, Field.owner_id == user_id)
+                )
             )
             await session.commit()

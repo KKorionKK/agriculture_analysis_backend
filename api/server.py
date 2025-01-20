@@ -1,5 +1,4 @@
 import tornado
-from api.common.handler import BaseHandler
 from api.services import PGManager, AuthorizationService
 from api.common.vigilante import Vigilante
 from api.services.emitter import Emitter

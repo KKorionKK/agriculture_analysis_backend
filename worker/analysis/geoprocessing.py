@@ -8,6 +8,7 @@ import laspy
 import cv2
 import open3d as o3d
 
+
 def convert_gps_to_decimal(gps_coords):
     """
     Конвертирует GPS координаты из формата (градусы, минуты, секунды) в десятичные градусы
@@ -19,25 +20,26 @@ def convert_gps_to_decimal(gps_coords):
 
     return decimal_degrees
 
+
 def extract_image_metadata(image_path):
     # Извлечение метаданных геолокации из изображения
-    with open(image_path, 'rb') as img_file:
+    with open(image_path, "rb") as img_file:
         image = exif.Image(img_file)
 
     # Получение GPS-координат
     # Получение GPS координат в формате (градусы, минуты, секунды)
-    latitude_dms = image.get('gps_latitude', None)
-    longitude_dms = image.get('gps_longitude', None)
+    latitude_dms = image.get("gps_latitude", None)
+    longitude_dms = image.get("gps_longitude", None)
 
     # Преобразование в десятичные градусы
     latitude = convert_gps_to_decimal(latitude_dms) if latitude_dms else None
     longitude = convert_gps_to_decimal(longitude_dms) if longitude_dms else None
 
     return {
-        'latitude': latitude,
-        'longitude': longitude,
-        'camera_model': image.get('model', 'Unknown'),
-        'timestamp': image.get('datetime', None)
+        "latitude": latitude,
+        "longitude": longitude,
+        "camera_model": image.get("model", "Unknown"),
+        "timestamp": image.get("datetime", None),
     }
 
 
@@ -48,13 +50,15 @@ def create_point_cloud_with_metadata(image_paths):
     for img_path in image_paths:
         metadata = extract_image_metadata(img_path)
 
-        if metadata['latitude'] is not None and metadata['longitude'] is not None:
-            data.append({
-                'latitude': metadata['latitude'],
-                'longitude': metadata['longitude'],
-                'camera_model': metadata['camera_model'],
-                'timestamp': metadata['timestamp']
-            })
+        if metadata["latitude"] is not None and metadata["longitude"] is not None:
+            data.append(
+                {
+                    "latitude": metadata["latitude"],
+                    "longitude": metadata["longitude"],
+                    "camera_model": metadata["camera_model"],
+                    "timestamp": metadata["timestamp"],
+                }
+            )
 
     if not data:
         return None
@@ -63,13 +67,11 @@ def create_point_cloud_with_metadata(image_paths):
     df = pd.DataFrame(data)
 
     # Создаем список геометрических объектов
-    geometry = [Point(xy) for xy in zip(df['longitude'], df['latitude'])]
+    geometry = [Point(xy) for xy in zip(df["longitude"], df["latitude"])]
 
     # Создаем GeoDataFrame
     gdf = gpd.GeoDataFrame(
-        df,
-        geometry=geometry,
-        crs="EPSG:4326"  # Явно указываем строкой
+        df, geometry=geometry, crs="EPSG:4326"  # Явно указываем строкой
     )
 
     # Проверяем и трансформируем CRS если нужно
@@ -81,21 +83,21 @@ def create_point_cloud_with_metadata(image_paths):
 
     # Сохраняем в различных форматах для тестирования
     # GeoPackage
-    gdf.to_file('point_cloud.gpkg', driver='GPKG', engine='fiona')
+    gdf.to_file("point_cloud.gpkg", driver="GPKG", engine="fiona")
 
     # GeoJSON (как альтернатива)
-    gdf.to_file('point_cloud.geojson', driver='GeoJSON', engine='fiona')
+    gdf.to_file("point_cloud.geojson", driver="GeoJSON", engine="fiona")
 
     # Shapefile (как еще одна альтернатива)
-    gdf.to_file('point_cloud.shp', engine='fiona')
+    gdf.to_file("point_cloud.shp", engine="fiona")
 
     return gdf
 
 
 def test():
-    dirpath = '/Users/kkorionkk/Курсач/Тестовые данные/архив/rgb'
+    dirpath = "/Users/kkorionkk/Курсач/Тестовые данные/архив/rgb"
     paths = os.listdir(dirpath)
-    paths = [dirpath + '/' + path for path in paths]
+    paths = [dirpath + "/" + path for path in paths]
     point_cloud = create_point_cloud_with_metadata(paths)
 
 
@@ -141,12 +143,12 @@ def create_point_cloud(image_path):
     return pcd
 
 
-
 def test3d():
-    dirpath = '/Users/kkorionkk/Курсач/Тестовые данные/архив/rgb'
+    dirpath = "/Users/kkorionkk/Курсач/Тестовые данные/архив/rgb"
     paths = os.listdir(dirpath)
-    paths = [dirpath + '/' + path for path in paths]
+    paths = [dirpath + "/" + path for path in paths]
     point_cloud = create_point_cloud(paths[0])
+
 
 #
 # # Пример использования

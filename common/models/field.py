@@ -4,10 +4,8 @@ from sqlalchemy import (
     DateTime,
     Integer,
     ARRAY,
-    Float,
     JSON,
     ForeignKey,
-    Numeric,
 )
 from api.common import tools
 from datetime import datetime
@@ -22,7 +20,9 @@ class Field(Base):
     id: Mapped[str] = mapped_column(String, primary_key=True, default=tools.get_uuid)
     name: Mapped[str] = mapped_column(String, nullable=False)
     color: Mapped[str] = mapped_column(String, nullable=False, default="#FFFFF")
-    coordinates: Mapped[list[dict]] = mapped_column(ARRAY(JSON), nullable=False, default=None)
+    coordinates: Mapped[list[dict]] = mapped_column(
+        ARRAY(JSON), nullable=False, default=None
+    )
     area: Mapped[int] = mapped_column(Integer, nullable=False)
 
     last_analysed: Mapped[datetime] = mapped_column(
@@ -32,7 +32,12 @@ class Field(Base):
         DateTime(timezone=True), default=tools.get_dt
     )
 
-    organization_id: Mapped[str] = mapped_column(String, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True, default=None)
+    organization_id: Mapped[str] = mapped_column(
+        String,
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=True,
+        default=None,
+    )
     organization: Mapped["Organization"] = relationship(
         "Organization",
         remote_side="Organization.id",  # type: ignore  # noqa: F821

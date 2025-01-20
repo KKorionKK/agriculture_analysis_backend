@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 from logging import Logger
 import io
 from worker.utils.media import MediaController
-from typing import Tuple
 from worker.utils.database import SyncPostgreSQLController
 from worker.models.analyze_request import AnalyzeRequest
 from sqlalchemy import update
@@ -22,7 +21,6 @@ from worker.models.dto import (
     UploadedFiles,
 )
 
-from sqlalchemy.orm import session
 from worker.models.ndvi_result import NDVIResult as DBResult
 
 from .model import NDVIResult
@@ -60,7 +58,7 @@ class NDVIAnalyzer:
 
         # Изменяем размер NIR изображения
         nir_resized = cv2.resize(nir_image, (target_width, target_height))
-        nir_resized = cv2.rotate(nir_resized, 180) # TODO: delete in production
+        nir_resized = cv2.rotate(nir_resized, 180)  # TODO: delete in production
 
         # Убеждаемся, что NIR - одноканальное изображение
         if len(nir_resized.shape) > 2:
@@ -191,7 +189,12 @@ class NDVIAnalyzer:
         return fig
 
     def save_analysis_visualizations(
-        self, rgb_image, analysis_results: CropHealthData, output_path, dpi=300, img_name: str = None
+        self,
+        rgb_image,
+        analysis_results: CropHealthData,
+        output_path,
+        dpi=300,
+        img_name: str = None,
     ) -> SavedFiles:
         """
         Сохраняет визуализации анализа состояния посевов в отдельные файлы
@@ -291,26 +294,28 @@ class NDVIAnalyzer:
             session.add(model)
             session.flush([model])
 
-            session.execute(update(AnalyzeRequest)
-                            .where(AnalyzeRequest.id == request.id)
-                            .values(ndvi_result_id=model.id, ndvi_status=DataStatus.ready))
+            session.execute(
+                update(AnalyzeRequest)
+                .where(AnalyzeRequest.id == request.id)
+                .values(ndvi_result_id=model.id, ndvi_status=DataStatus.ready)
+            )
             session.flush([model, request])
             session.commit()
 
     def get_ordered_lists(self, path: str):
-        nir_path = path + '/nir'
-        rgb_path = path + '/rgb'
+        nir_path = path + "/nir"
+        rgb_path = path + "/rgb"
         if not os.path.exists(nir_path) or not os.path.exists(rgb_path):
-            raise Exception('Not found nir or rgb dirs')
+            raise Exception("Not found nir or rgb dirs")
 
         nirs = []
         rgbs = []
         for file in os.listdir(nir_path):
-            if file.endswith('.JPG') or file.endswith('.tif'):
-                nirs.append(nir_path + '/' + file)
+            if file.endswith(".JPG") or file.endswith(".tif"):
+                nirs.append(nir_path + "/" + file)
         for file in os.listdir(rgb_path):
-            if file.endswith('.JPG'):
-                rgbs.append(rgb_path + '/' + file)
+            if file.endswith(".JPG"):
+                rgbs.append(rgb_path + "/" + file)
 
         return nirs, rgbs
 

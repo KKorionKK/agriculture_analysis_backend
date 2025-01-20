@@ -7,7 +7,7 @@ errors = {
     11: "Email in use",
     12: "Account not found",
     13: "Need any data for analysis",
-    14: "Not enough permissions"
+    14: "Not enough permissions",
 }
 
 
