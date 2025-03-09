@@ -24,7 +24,7 @@ Base = declarative_base()
 class PostgreSQLController:
     def __init__(self, echo: bool = False) -> None:
         self.engine: AsyncEngine = create_async_engine(
-            config.get_connection_string(), echo=echo
+            config.get_connection_string(), echo=echo, plugins=["geoalchemy2"]
         )
         self._session_maker: async_sessionmaker[AsyncSession] = async_sessionmaker(
             self.engine, expire_on_commit=False

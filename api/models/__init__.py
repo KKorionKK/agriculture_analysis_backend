@@ -5,6 +5,8 @@ from common.models.plants_result import PlantsResult
 from common.models.ndvi_result import NDVIResult
 from common.models.organization import Organization
 from common.models.cr_organizations_users import CrOrganizationsUsers
+from common.models.invitation import Invitation
+from common.models.notifications import Notification
 
 __all__ = [
     "User",
@@ -14,6 +16,8 @@ __all__ = [
     "NDVIResult",
     "Organization",
     "CrOrganizationsUsers",
+    "Invitation",
+    "Notification",
 ]
 
 """

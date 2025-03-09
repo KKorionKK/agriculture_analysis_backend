@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgis/postgis:14-3.3
+    environment:
+      - POSTGRES_USER=furher
+      - POSTGRES_PASSWORD=123gr
+      - POSTGRES_DB=analysis_db
+    ports:
+      - 5432:5432

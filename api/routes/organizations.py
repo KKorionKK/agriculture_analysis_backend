@@ -50,3 +50,26 @@ class OneOrganizationHandler(BaseHandler):
     async def delete(self, field_id):
         await self.pg.fields.delete_field_by_id(field_id, self.current_user.id)
         self.write({"message": "OK"})
+
+
+class OrganizationInviteHandler(BaseHandler):
+    async def post(self, organization_id):
+        pass
+
+
+class OrganizationFieldsHandler(BaseHandler):
+    async def get(self, organization_id):
+        restrictions = RestrictionsSchema(
+            edit=await self.check_roles(Roles.admin, organization_id, True),
+            delete=await self.check_roles(Roles.owner, organization_id, True),
+        )
+        fields = await self.pg.organizations.get_field_by_organization_id(
+            organization_id
+        )
+        # organization.restrictions = restrictions
+
+        self.write({"fields": fields})
+
+    async def delete(self, field_id):
+        await self.pg.fields.delete_field_by_id(field_id, self.current_user.id)
+        self.write({"message": "OK"})

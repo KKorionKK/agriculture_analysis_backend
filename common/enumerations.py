@@ -57,13 +57,31 @@ class Roles(str, Enum):
 
 
 class ChartType(str, Enum):
+    ndvi = "ndvi"
+    disease = "disease"
+    health = "health"
+
+    @staticmethod
+    def as_list():
+        data = ChartType._member_map_  # noqa
+        return [item.name for item in data.values()]
+
+
+class Filter(str, Enum):
     day = "day"
     week = "week"
     month = "month"
     year = "year"
 
 
-class Filter(str, Enum):
-    ndvi = "ndvi"
-    disease = "disease"
-    health = "health"
+class NotificationType(str, Enum):
+    social = "social"
+    analysis = "analysis"
+    system = "system"
+
+
+class NotificationSubjectType(str, Enum):
+    analrequest = "analrequest"
+    field = "field"
+    invite = "invite"
+    organization = "organization"

@@ -4,8 +4,8 @@ from api.repositories import (
     FieldsRepository,
     AnalyzeRequestsRepository,
     OrganizationsRepository,
-    # TracksRepository,
-    # SharesRepository
+    InvitationsRepository,
+    NotificationsRepository,
 )
 
 
@@ -16,5 +16,5 @@ class PGManager:
         self.fields = FieldsRepository(self.client, self)
         self.analrequests = AnalyzeRequestsRepository(self.client, self)
         self.organizations = OrganizationsRepository(self.client, self)
-        # self.tracks = TracksRepository(self.client, self)
-        # self.shares = SharesRepository(self.client, self)
+        self.invitations = InvitationsRepository(self.client, self)
+        self.notifications = NotificationsRepository(self.client, self)

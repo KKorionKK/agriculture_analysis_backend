@@ -43,5 +43,8 @@ class ChartRawData:
         day = self.dt.day
 
         dt = f"{day} {month}"
+        value = 0
+        if self.value:
+            value = self.value
 
-        return ChartFormattedData(value=round(self.value, 2), dt=dt)
+        return ChartFormattedData(value=round(value, 2), dt=dt)

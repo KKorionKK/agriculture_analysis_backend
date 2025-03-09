@@ -1,3 +1,4 @@
+
 errors = {
     1: "Unexpected error",
     2: "Validation error",
@@ -8,6 +9,9 @@ errors = {
     12: "Account not found",
     13: "Need any data for analysis",
     14: "Not enough permissions",
+    15: "Object not found",
+    20: "Unexpected chart type",
+    21: "Unexpected filter",
 }
 
 
@@ -38,3 +42,7 @@ class ExceptionCodes:
     AccountNotFound = 12
     NeedData = 13
     NotEnoughPermissions = 14
+    ObjectNotFound = 15
+
+    ChartTypeUnexpected = 20
+    FilterUnexpected = 21

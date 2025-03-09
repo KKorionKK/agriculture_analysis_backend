@@ -37,3 +37,8 @@ AMQP_HOST = env.get("AMQP_HOST")
 AMQP_PORT = env.get("AMQP_PORT")
 AMQP_VIRTUALHOST = env.get("AMQP_VIRTUALHOST")
 AMQP_QUEUE = env.get("AMQP_QUEUE")
+
+# S3 Storage
+S3_ACCESS_ID = env.get("S3_ACCESS_ID")
+S3_SECRET_KEY = env.get("S3_SECRET_KEY")
+S3_BUCKET = env.get("S3_BUCKET")

@@ -1,11 +1,11 @@
 from .base import Repository
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, update, and_
 from sqlalchemy.orm import selectinload
 from api.models import AnalyzeRequest, User, NDVIResult, Field
 from api.common.enumerations import DataStatus
 
-from api.schemas.analyze_request import AnalyzeRequestCreate
+from api.schemas.analyze_request import AnalyzeRequestCreate, AnalyzeRequestUpdate
 
 
 class AnalyzeRequestsRepository(Repository):
@@ -26,6 +26,25 @@ class AnalyzeRequestsRepository(Repository):
                 )
             )
             return result
+
+    async def get_request_info_by_id(self, request_id: str):
+        async with self.client() as session:
+            session: AsyncSession
+            result = (
+                (
+                    await session.execute(
+                        select(AnalyzeRequest)
+                        .where(AnalyzeRequest.id == request_id)
+                        .options(
+                            selectinload(AnalyzeRequest.ndvi_result),
+                            selectinload(AnalyzeRequest.plants_result),
+                        )
+                    )
+                )
+                .scalars()
+                .first()
+            )
+            return result.as_detail_schema()
 
     async def get_requests_by_field(self, field_id: str) -> list[AnalyzeRequest] | list:
         async with self.client() as session:
@@ -110,6 +129,7 @@ class AnalyzeRequestsRepository(Repository):
         async with self.client() as session:
             session: AsyncSession
             request = AnalyzeRequest(
+                title=data.title,
                 origin_ndvi_data=data.origin_ndvi_data,
                 origin_plants_data=data.origin_plants_data,
                 ndvi_status=ndvi_status.value,
@@ -119,5 +139,57 @@ class AnalyzeRequestsRepository(Repository):
             )
             session.add(request)
             await session.flush()
+            await session.commit()
+            return request
+
+    async def update_request(
+        self, data: AnalyzeRequestUpdate, user: User
+    ) -> AnalyzeRequest | None:
+        async with self.client() as session:
+            session: AsyncSession
+            # update origin_ndvi_data and origin_plants_data on data.analyze_id
+            request = (
+                (
+                    await session.execute(
+                        select(AnalyzeRequest).where(
+                            and_(
+                                AnalyzeRequest.id == data.analyze_id,
+                                AnalyzeRequest.issuer_id == user.id,
+                            )
+                        )
+                    )
+                )
+                .scalars()
+                .first()
+            )
+
+            if not request:
+                return None
+
+            new_ndvi = request.origin_ndvi_data
+            new_plants = request.origin_plants_data
+            new_ndvi_status = DataStatus(request.ndvi_status)
+            new_plants_status = DataStatus(request.plants_status)
+
+            if request.origin_ndvi_data != data.origin_ndvi_data:
+                new_ndvi = data.origin_ndvi_data
+                new_ndvi_status = DataStatus.waiting
+
+            if request.origin_plants_data != data.origin_plants_data:
+                new_plants = data.origin_plants_data
+                new_plants_status = DataStatus.waiting
+
+            await session.execute(
+                update(AnalyzeRequest)
+                .where(AnalyzeRequest.id == data.analyze_id)
+                .values(
+                    origin_ndvi_data=new_ndvi,
+                    origin_plants_data=new_plants,
+                    ndvi_status=new_ndvi_status.value,
+                    plants_status=new_plants_status.value,
+                    title=data.title,
+                )
+            )
+            await session.flush([request])
             await session.commit()
             return request

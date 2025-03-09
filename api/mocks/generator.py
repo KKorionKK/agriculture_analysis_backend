@@ -404,6 +404,7 @@ class DataGenerator:
             heatmaps=[],
             issuer_id=field.owner_id,
             created_at=created_at,
+            rast=None,
         )
 
     def __create_plants(

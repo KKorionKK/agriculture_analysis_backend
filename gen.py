@@ -2,6 +2,8 @@ import asyncio
 from api.mocks.generator import DataGenerator
 import pickle
 
+from api.services.database import PostgreSQLController
+
 
 def test_dump():
     with open(
@@ -14,7 +16,14 @@ def test_dump():
         f.write(dump)
 
 
-if __name__ == "__main__":
+async def init():
+    c = PostgreSQLController(echo=True)
+    await c.drop_db()
+    await c.init_db()
     gen = DataGenerator()
-    asyncio.run(gen.create_mock_database())
+    await gen.create_mock_database()
+
+
+if __name__ == "__main__":
+    asyncio.run(init())
     # test_dump()

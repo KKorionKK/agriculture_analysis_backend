@@ -1,8 +1,12 @@
 from .authorization import AuthorizationHandler, AuthorizationStatusHandler
 from .upload import UploadHandler
-from .fields import FieldHandler, OneFieldHandler
-from .analyze_request import AnalyzeRequestHandler
-from .organizations import OrganizationsHandler, OneOrganizationHandler
+from .fields import FieldHandler, OneFieldHandler, FieldChartHandler
+from .analyze_request import AnalyzeRequestHandler, OneAnalyzeRequestHandler
+from .organizations import (
+    OrganizationsHandler,
+    OneOrganizationHandler,
+    OrganizationFieldsHandler,
+)
 from api.common.handler import BaseHandler
 
 
@@ -15,9 +19,12 @@ def get_routes(data: dict) -> list[str, BaseHandler, dict]:
         (r"/upload", UploadHandler, data),
         (r"/field", FieldHandler, data),
         (r"/field/([^/]+)", OneFieldHandler, data),
+        (r"/field/([^/]+)/chart", FieldChartHandler, data),
         (r"/analyze", AnalyzeRequestHandler, data),
+        (r"/analyze/([^/]+)", OneAnalyzeRequestHandler, data),
         (r"/organization", OrganizationsHandler, data),
         (r"/organization/([^/]+)", OneOrganizationHandler, data),
+        (r"/organization/([^/]+)/field", OrganizationFieldsHandler, data),
     ]
 
 

@@ -1,7 +1,15 @@
 from .base import Repository
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, delete, func
-from api.models import Field, User, AnalyzeRequest, NDVIResult, PlantsResult
+from sqlalchemy import select, and_, delete, func, update
+from api.models import (
+    Field,
+    User,
+    AnalyzeRequest,
+    NDVIResult,
+    PlantsResult,
+    Organization,
+    CrOrganizationsUsers,
+)
 
 from api.common.enumerations import DataUploadedStatus, HealthStatus, DataStatus
 
@@ -15,6 +23,8 @@ from api.schemas.fields import (
     NDVIReport,
     FieldExtendedWithMeanValuesSchema,
 )
+
+from api.common.exceptions import ExceptionCodes, CustomHTTPException
 
 
 class FieldsRepository(Repository):
@@ -165,9 +175,9 @@ class FieldsRepository(Repository):
                 for field in fields
             ]
 
-            return await self.__construct_avg_data(fields, requests)
+            return await self.construct_avg_data(fields, requests)
 
-    async def __construct_avg_data(
+    async def construct_avg_data(
         self, fields: list[Field], requests: list[AnalyzeRequest]
     ) -> list[FieldExtendedWithMeanValuesSchema]:
         schemas: list[FieldExtendedWithMeanValuesSchema] = []
@@ -334,15 +344,19 @@ class FieldsRepository(Repository):
         if not last_completed:
             return avg_ndvi, avg_vegetation, avg_decease
 
-        for item in last_completed.ndvi.reports:
-            if item.ndvi:
-                avg_ndvi += item.ndvi
-                avg_vegetation += item.plants_percentage
-                avg_decease += item.affected_percentage
+        ndvi_reports_count = 1
 
-        avg_ndvi /= round(len(last_completed.ndvi.reports), 2)
-        avg_vegetation /= round(len(last_completed.ndvi.reports), 2)
-        avg_decease /= round(len(last_completed.ndvi.reports), 2)
+        if last_completed.ndvi:
+            ndvi_reports_count = len(last_completed.ndvi.reports)
+            for item in last_completed.ndvi.reports:
+                if item.ndvi:
+                    avg_ndvi += item.ndvi
+                    avg_vegetation += item.plants_percentage
+                    avg_decease += item.affected_percentage
+
+        avg_ndvi /= round(ndvi_reports_count, 2)
+        avg_vegetation /= round(ndvi_reports_count, 2)
+        avg_decease /= round(ndvi_reports_count, 2)
 
         return avg_ndvi, avg_vegetation, avg_decease
 
@@ -391,3 +405,42 @@ class FieldsRepository(Repository):
                 )
             )
             await session.commit()
+
+    async def append_field_to_organization(
+        self, field_id: str, organization_id: str, user: User
+    ) -> Field:
+        async with self.client() as session:
+            session: AsyncSession
+            field = await session.execute(select(Field).where(Field.id == field_id))
+            field = field.scalars().first()
+            if not field:
+                raise CustomHTTPException(ExceptionCodes.ObjectNotFound)
+            if field.owner_id != user.id:
+                raise CustomHTTPException(ExceptionCodes.NotEnoughPermissions)
+            # check if organization exists
+            organization = await session.execute(
+                select(Organization).where(Organization.id == organization_id)
+            )
+            organization = organization.scalars().first()
+            if not organization:
+                raise CustomHTTPException(ExceptionCodes.ObjectNotFound)
+
+            # check if user in organization
+            cr = await session.execute(
+                select(CrOrganizationsUsers).where(
+                    CrOrganizationsUsers.user_id == user.id,
+                    CrOrganizationsUsers.organization_id == organization_id,
+                )
+            )
+            cr = cr.scalars().first()
+            if not cr:
+                raise CustomHTTPException(ExceptionCodes.NotEnoughPermissions)
+
+            await session.execute(
+                update(Field)
+                .where(Field.id == field_id)
+                .values(organization_id=organization_id)
+            )
+            await session.commit()
+
+            return await self.get_field_details(field_id, user.id)

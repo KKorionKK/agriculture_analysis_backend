@@ -5,13 +5,14 @@ from datetime import datetime
 from api.services.database import Base
 
 from api.common import DataStatus
-from api.schemas.analyze_request import AnalyzeRequestSchema
+from api.schemas.analyze_request import AnalyzeRequestSchema, AnalyzeRequestDetailSchema
 
 
 class AnalyzeRequest(Base):
     __tablename__ = "analyze_requests"
 
     id: Mapped[str] = mapped_column(String, primary_key=True, default=tools.get_uuid)
+    title: Mapped[str] = mapped_column(String, nullable=False)
     origin_ndvi_data: Mapped[str] = mapped_column(String, default=None, nullable=True)
     origin_plants_data: Mapped[str] = mapped_column(String, default=None, nullable=True)
 
@@ -70,8 +71,31 @@ class AnalyzeRequest(Base):
     def as_schema(self):
         return AnalyzeRequestSchema(
             id=self.id,
+            title=self.title,
             ndvi_status=self.ndvi_status,
             plants_status=self.plants_status,
             fail_info=self.fail_info,
             created_at=self.created_at,
+        )
+
+    def as_detail_schema(self):
+        ndvi = None
+        plants = None
+        if self.ndvi_result:
+            ndvi = self.ndvi_result.as_detail_schema()
+        if self.plants_result:
+            plants = self.plants_result.as_detail_schema()
+
+        return AnalyzeRequestDetailSchema(
+            request_id=self.id,
+            title=self.title,
+            requested_dt=self.created_at,
+            ndvi_analyze_status=self.ndvi_status,
+            plants_analyze_status=self.plants_status,
+            field_id=self.field_id,
+            origin_ndvi_data=self.origin_ndvi_data,
+            origin_plants_data=self.origin_plants_data,
+            fail_info=self.fail_info,
+            ndvi=ndvi,
+            plants=plants,
         )

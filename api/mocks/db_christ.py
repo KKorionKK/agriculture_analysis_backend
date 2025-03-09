@@ -13,7 +13,7 @@ roles = ["admin", "write", "read_only"]
 
 async def test():
     c = PostgreSQLController(echo=True)
-    await c.drop_db()
+    # await c.drop_db()
     await c.init_db()
 
 
@@ -134,5 +134,5 @@ def insert_field():
 
 if __name__ == "__main__":
     asyncio.run(test())
-    insert_field()
+    # insert_field()
     # get_data()

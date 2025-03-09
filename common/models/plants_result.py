@@ -4,6 +4,8 @@ from api.common import tools
 from datetime import datetime
 from api.services.database import Base
 
+from api.schemas.analyze_request import PlantsAnalysisSchema, PlantsArtifactSchema
+
 
 class PlantsResult(Base):
     __tablename__ = "plants_results"
@@ -30,3 +32,14 @@ class PlantsResult(Base):
         remote_side="User.id",  # type: ignore  # noqa: F821
         primaryjoin="PlantsResult.issuer_id == User.id",
     )
+
+    def as_detail_schema(self) -> PlantsAnalysisSchema:
+        return PlantsAnalysisSchema(
+            id=self.id,
+            artifacts=[
+                PlantsArtifactSchema(href=item.get("href", ""))
+                for item in self.artifacts
+            ],
+            gis_file=self.gis_file,
+            created_at=self.created_at,
+        )

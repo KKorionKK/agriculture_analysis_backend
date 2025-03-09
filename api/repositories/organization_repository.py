@@ -1,11 +1,17 @@
 from .base import Repository
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, delete
 from sqlalchemy.orm import selectinload
 
-from api.models import Organization, CrOrganizationsUsers
-from api.schemas.organizations import OrganizationDetailsSchema
+from api.models import Organization, CrOrganizationsUsers, Field, User
+from api.schemas.organizations import (
+    OrganizationDetailsSchema,
+    OrganizationCreateSschema,
+)
+from api.schemas.fields import FieldExtendedWithMeanValuesSchema
+
+from api.common.exceptions import ExceptionCodes, CustomHTTPException
 
 
 class OrganizationsRepository(Repository):
@@ -107,3 +113,64 @@ class OrganizationsRepository(Repository):
                 users=[cr.user.as_schema_with_role(cr.role) for cr in result.members]
                 + [result.owner.as_schema_with_role("owner")],
             )
+
+    async def get_field_by_organization_id(
+        self, organization_id: str
+    ) -> list[FieldExtendedWithMeanValuesSchema] | list:
+        async with self.client() as session:
+            session: AsyncSession
+            fields = list(
+                (
+                    (
+                        await session.execute(
+                            select(Field).where(
+                                Field.organization_id == organization_id
+                            )
+                        )
+                    )
+                    .scalars()
+                    .all()
+                )
+            )
+            requests = [
+                await self.manager.analrequests.get_last_request_by_field(field.id)
+                for field in fields
+            ]
+
+            return await self.manager.fields.construct_avg_data(fields, requests)
+
+    async def create_organization(
+        self, schema: OrganizationCreateSschema, user: User
+    ) -> Organization:
+        async with self.client() as session:
+            session: AsyncSession
+            organization = Organization(
+                name=schema.name,
+                is_public=schema.is_public,
+                owner_id=user.id,
+            )
+            session.add(organization)
+            await session.flush()
+            await session.commit()
+            return await self.get_users_organizations_and_participants_count(user.id)
+
+    async def disband_organization(
+        self, organization_id: str, user: User
+    ) -> Organization:
+        async with self.client() as session:
+            session: AsyncSession
+            organization = await session.execute(
+                select(Organization).where(Organization.id == organization_id)
+            )
+            organization = organization.scalars().first()
+            if not organization:
+                raise CustomHTTPException(ExceptionCodes.ObjectNotFound)
+            if organization.owner_id != user.id:
+                raise CustomHTTPException(ExceptionCodes.NotEnoughPermissions)
+
+            await session.execute(
+                delete(Organization).where(Organization.id == organization_id)
+            )
+            await session.commit()
+
+            return await self.get_users_organizations_and_participants_count(user.id)
