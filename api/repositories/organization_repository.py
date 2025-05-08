@@ -1,7 +1,7 @@
 from .base import Repository
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_, delete
+from sqlalchemy import select, and_, delete, or_
 from sqlalchemy.orm import selectinload
 
 from api.models import Organization, CrOrganizationsUsers, Field, User
@@ -32,6 +32,7 @@ class OrganizationsRepository(Repository):
     async def get_users_organizations_and_participants_count(
         self, user_id: str
     ) -> list[Organization]:
+        print(user_id)
         async with self.client() as session:
             session: AsyncSession
             query = (
@@ -39,8 +40,9 @@ class OrganizationsRepository(Repository):
                 .join(
                     CrOrganizationsUsers,
                     Organization.id == CrOrganizationsUsers.organization_id,
+                    full=True,
                 )
-                .where(CrOrganizationsUsers.user_id == user_id)
+                .where(or_(CrOrganizationsUsers.user_id == user_id, Organization.owner_id == user_id))
                 .options(
                     selectinload(Organization.owner),
                     selectinload(Organization.members).selectinload(

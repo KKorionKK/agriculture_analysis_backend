@@ -2,7 +2,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, DateTime, ARRAY, JSON, ForeignKey
 from api.common import tools
 from datetime import datetime
-from api.services.database import Base
+from common.database import Base
 
 from api.schemas.analyze_request import PlantsAnalysisSchema, PlantsArtifactSchema
 

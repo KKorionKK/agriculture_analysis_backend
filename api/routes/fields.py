@@ -15,7 +15,6 @@ class FieldHandler(BaseHandler):
 
     async def post(self):
         data = self.get_body()
-        print(data)
         schema = FieldCreateSchema(**data)
 
         field = await self.pg.fields.create_field(schema, self.current_user)

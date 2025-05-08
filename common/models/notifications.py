@@ -3,7 +3,7 @@ from sqlalchemy import String, DateTime, Boolean, ForeignKey, Enum
 from api.common import tools
 from datetime import datetime
 
-from api.services.database import Base
+from common.database import Base
 from api.common.enumerations import NotificationType, NotificationSubjectType
 from api.schemas.notifications import NotificationSchema
 

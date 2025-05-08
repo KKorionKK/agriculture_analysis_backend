@@ -3,7 +3,7 @@ from sqlalchemy import String, DateTime
 from api.common import tools
 from datetime import datetime
 
-from api.services.database import Base
+from common.database import Base
 from api.schemas.users import UserSchemaWithRole
 from api.common.enumerations import Roles
 

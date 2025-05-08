@@ -2,7 +2,7 @@ from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import String, DateTime, ARRAY, JSON, ForeignKey, LargeBinary
 from api.common import tools
 from datetime import datetime
-from api.services.database import Base
+from common.database import Base
 
 from common.dto import NDVIResult as DTOResult
 from api.schemas.analyze_request import NDVIAnalysisSchema, NDVIReportSchema

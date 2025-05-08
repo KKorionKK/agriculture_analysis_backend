@@ -316,6 +316,7 @@ class FieldsRepository(Repository):
                 schemas.append(
                     AnalysisRequest(
                         request_id=request.id,
+                        title=request.title,
                         requested_dt=request.created_at,
                         ndvi_analyze_status=request.ndvi_status,
                         plants_analyze_status=request.plants_status,

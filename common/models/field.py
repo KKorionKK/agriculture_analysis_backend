@@ -9,7 +9,7 @@ from sqlalchemy import (
 )
 from api.common import tools
 from datetime import datetime
-from api.services.database import Base
+from common.database import Base
 
 from api.schemas.fields import FieldSchema
 

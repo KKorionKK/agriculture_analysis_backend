@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from worker.models.analyze_request import AnalyzeRequest
+from common.models.analyze_request import AnalyzeRequest
 import datetime
 from worker.utils.enumerations import AnalysisType
 

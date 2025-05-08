@@ -2,7 +2,7 @@ from api.common.handler import BaseHandler
 from api.schemas.analyze_request import AnalyzeRequestCreate
 
 from api.common.exceptions import ExceptionCodes, CustomHTTPException
-from api.schemas.organizations import RestrictionsSchema
+from api.schemas.organizations import RestrictionsSchema, OrganizationCreateSschema
 from api.common.enumerations import Roles
 
 
@@ -23,15 +23,11 @@ class OrganizationsHandler(BaseHandler):
 
     async def post(self):
         data = self.get_body()
-        schema = AnalyzeRequestCreate(**data)
-        if schema.origin_ndvi_data is None and schema.origin_plants_data is None:
-            raise CustomHTTPException(ExceptionCodes.NeedData)
+        schema = OrganizationCreateSschema(**data)
 
-        request = await self.pg.analrequests.create_request(schema, self.current_user)
+        request = await self.pg.organizations.create_organization(schema, self.current_user)
 
-        await self.emitter.send_task(request.id)
-
-        self.write(request.as_schema())
+        self.write(request)
 
 
 class OneOrganizationHandler(BaseHandler):

@@ -1,5 +1,5 @@
 from worker.mq.controller import Master
-from worker.utils.database import SyncPostgreSQLController
+from common.database import SyncPostgreSQLController
 import os
 from pathlib import Path
 

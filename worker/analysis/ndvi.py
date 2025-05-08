@@ -7,23 +7,23 @@ import matplotlib.pyplot as plt
 from logging import Logger
 import io
 from worker.utils.media import MediaController
-from worker.utils.database import SyncPostgreSQLController
-from worker.models.analyze_request import AnalyzeRequest
+from common.database import SyncPostgreSQLController
+from common.models.analyze_request import AnalyzeRequest
 from sqlalchemy import update
 from worker.utils.enumerations import DataStatus
 
 
-from worker.models.dto import (
+from common.dto import (
     CropHealthStats,
     CropHealthData,
     File,
     SavedFiles,
     UploadedFiles,
+    NDVIResult
 )
 
-from worker.models.ndvi_result import NDVIResult as DBResult
+from common.models.ndvi_result import NDVIResult as DBResult
 
-from .model import NDVIResult
 
 
 class NDVIAnalyzer:
@@ -370,8 +370,8 @@ class NDVIAnalyzer:
         return uploaded
 
     def debug_analyze(self, rgb, nir):
-        rgb_path = "/Users/kkorionkk/Downloads/archive (1)/rgb-images/IX-01-07922_0011_0093.JPG"
-        nir_path = "/Users/kkorionkk/Downloads/archive (1)/multispectral-images/NIR/IMG_210204_095452_0093_NIR.tif"
+        rgb_path = "/Users/kkorionkk/Курсач/Тестовые данные/archive (1)/rgb-images/IX-01-07922_0011_0093.JPG"
+        nir_path = "/Users/kkorionkk/Курсач/Тестовые данные/archive (1)/multispectral-images/NIR/IMG_210204_095452_0093_NIR.tif"
 
         rgb_img = cv2.imread(rgb_path)
         nir_img = cv2.imread(nir_path, cv2.IMREAD_GRAYSCALE)
@@ -382,10 +382,10 @@ class NDVIAnalyzer:
 
         print("Создаем визуализацию...")
         img_name = rgb_path.split("/")[-1].split(".")[0]
-        ndvi, problems = self.save_analysis_visualizations(
+        result = self.save_analysis_visualizations(
             rgb_img, results, os.getcwd() + "/results/", img_name=img_name
         )
-        self.upload_visuals([ndvi, problems], img_name)
+        # self.upload_visuals([ndvi, problems], img_name)
 
 
 # def main():

@@ -26,3 +26,4 @@ rasterio==1.4.3
 Pillow==11.0.0
 requests~=2.32.3
 pandas~=2.2.3
+dramatiq==1.16.0

@@ -3,7 +3,7 @@ from sqlalchemy import String, DateTime, Boolean, ForeignKey
 from api.common import tools
 from datetime import datetime
 
-from api.services.database import Base
+from common.database import Base
 
 from api.schemas.organizations import UsersOrganizationItem
 

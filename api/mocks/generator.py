@@ -456,6 +456,7 @@ class DataGenerator:
 
                     request = AnalyzeRequest(
                         id=uuid.uuid4().hex,
+                        title="Анализ поля 12 марта",
                         origin_ndvi_data="123" if this_ndvi else None,
                         origin_plants_data="123" if this_plants else None,
                         ndvi_status=random.choice([*DataStatus._member_names_]),

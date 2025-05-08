@@ -82,6 +82,7 @@ class PlantsAnalysisSchema(BaseModel):
 
 class AnalysisRequest(BaseModel):
     request_id: str
+    title: str
     requested_dt: datetime
     ndvi_analyze_status: DataStatus
     plants_analyze_status: DataStatus
