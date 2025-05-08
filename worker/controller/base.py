@@ -9,7 +9,7 @@ from worker.utils.enumerations import AnalysisType
 from worker.analysis.ndvi import NDVIAnalyzer
 
 from worker.utils.vigilante import Vigilante
-from worker.utils.database import SyncPostgreSQLController
+from common.database import SyncPostgreSQLController
 
 from .model import Task
 

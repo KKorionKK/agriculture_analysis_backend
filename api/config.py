@@ -4,7 +4,7 @@ from dotenv import dotenv_values
 
 environment = os.getenv("ENV")
 env = dotenv_values(str(Path().absolute().parent) + "/.env")
-# print(str(Path().absolute().parent) + "/.env")
+print(str(Path().absolute().parent) + "/.env")
 
 # PostgreSQL
 PG_NAME = env.get("PG_NAME")

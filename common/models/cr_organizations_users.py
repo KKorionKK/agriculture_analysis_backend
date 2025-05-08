@@ -4,7 +4,7 @@ from api.common import tools
 
 from api.common.enumerations import Roles
 
-from api.services.database import Base
+from common.database import Base
 
 
 class CrOrganizationsUsers(Base):

@@ -2,6 +2,7 @@ from api.common.handler import BaseHandler
 from api.schemas.analyze_request import AnalyzeRequestCreate, AnalyzeRequestUpdate
 
 from api.common.exceptions import ExceptionCodes, CustomHTTPException
+from worker.ndvi_dramatiq.task import analyze_ndvi_task
 
 
 class OneAnalyzeRequestHandler(BaseHandler):
@@ -25,6 +26,17 @@ class AnalyzeRequestHandler(BaseHandler):
         request = await self.pg.analrequests.create_request(schema, self.current_user)
         # if request.origin_plants_data or request.origin_ndvi_data:
         #     await self.emitter.send_task(request.id)
+
+        # Пример: origin_ndvi_data содержит путь к RGB, а NIR путь можно получить по соглашению или из другого поля
+        rgb_path = schema.origin_ndvi_data  # путь к RGB
+        nir_path = schema.origin_plants_data  # путь к NIR (или другой путь, если у вас иначе)
+
+        # current_hash можно взять из request, если он там есть, иначе сгенерировать
+        current_hash = getattr(request, "current_hash", str(request.id))
+
+        # Запуск задачи Dramatiq (асинхронно, но send не awaitable)
+        if rgb_path and nir_path:
+            analyze_ndvi_task.send(rgb_path, nir_path, request.id, current_hash)
 
         self.write(request.as_schema())
 

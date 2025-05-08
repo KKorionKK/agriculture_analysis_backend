@@ -2,8 +2,8 @@ import pika
 from worker import config
 from worker.utils.enumerations import AnalysisType
 from worker.controller import InstanceController
-from worker.utils.database import SyncPostgreSQLController
-from worker.models import AnalyzeRequest
+from common.database import SyncPostgreSQLController
+from common.models import AnalyzeRequest
 
 from worker.analysis.ndvi import NDVIAnalyzer
 
